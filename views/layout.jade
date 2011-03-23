@@ -1,0 +1,10 @@
+!!! 5
+html(lang='en')
+	head
+		title= title
+		script(src='/js/socket.io.min.js')
+		script(type='text/javascript')
+			var socket = new io.Socket(null, {port: 8081, rememberTransport: false});
+			socket.connect();
+	body		
+		h1= title
