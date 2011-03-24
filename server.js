@@ -4,15 +4,17 @@ var connect = require('connect')
   , io = require('socket.io')
   , port = (process.env.PORT || 8081);
 
-
+var stat = __dirname + '/static';
 //Setup Express
 var server = express.createServer();
 server.configure(function(){
   server.set('views', __dirname + '/views');
+  server.set('view engine', 'jade');
+  server.use(express.compiler({ src: stat, enable: ['sass'] }));
   server.use(express.bodyParser());
   server.use(express.cookieParser());
   server.use(express.session({key: 'api-key', secret: 'api secret'}));
-  server.use(express.static(__dirname + '/static'));
+  server.use(express.static(stat));
   server.use(server.router);
 });
 
