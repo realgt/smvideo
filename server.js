@@ -24,9 +24,11 @@ var io = io.listen(server);
 io.on('connection', function(client){
     console.log('Client Connected');
     client.on('connect', function(message){
+      //todo: store connection_id in hashmap (redis ?) with timestamp and use as queue 
       console.log('Client Connected.');
     });
     client.on('disconnect', function(){
+      //todo remove connection_id from hashmap
       console.log('Client Disconnected.');
     });
 });
