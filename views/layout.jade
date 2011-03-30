@@ -9,16 +9,38 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 		script(type='text/javascript')
 			var socket = new io.Socket(null, {port: 8081, rememberTransport: false});
 			socket.connect();
-			socket.on('message', function() {
-			
+			socket.on('message', function(obj){
+				if (obj.message.substr(0,6) == 'stream'){
+					getMovie('Webcam').startStream(obj.message);
+				}				
+			});
+			function addToQueue(){
+				socket.send('queue');//this could be a username / stream title, etc
 			}
+			
+			function vote(streamNum){
+				socket.send('vote:' + streamNum);
+			}
+			
+			function flag(streamNum){
+				socket.send('flag:' + streamNum);
+			}
+			
+			function getMovie(movieName) {
+				if (navigator.appName.indexOf("Microsoft") != -1) {
+					return window[movieName];
+				} else {
+					return document[movieName];
+				}
+			}
+			
 	body		
 		#framework
 			#content_wrapper
 				#header_wrap.homepage
 					ul
 						li#nav_home 
-							a(href='http://www.google.com') Home
+							a(href='#', onClick='addToQueue()') Home
 				#logo
 				!{body}
 		#footer_wrapper
