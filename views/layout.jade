@@ -4,6 +4,8 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 		title= title
 		link(media='screen', rel='stylesheet', href = '/css/base.css')
 		link(rel='stylesheet', href = '/css/framework.css')
+		link(href='http://fonts.googleapis.com/css?family=Cabin+Sketch:bold', rel='stylesheet', type='text/css')
+		link(href='http://fonts.googleapis.com/css?family=Architects+Daughter:regular', rel='stylesheet', type='text/css')
 		meta(content='text/html; charset=utf-8', http-equiv='Content-Type')
 		script(src='/js/socket.io.min.js')
 		script(type='text/javascript')
@@ -13,9 +15,21 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 			var socket = new io.Socket(null, {port: 8081, rememberTransport: false});
 			socket.connect();
 			socket.on('message', function(obj){
-				if (obj.message.substr(0,6) == 'stream'){
+				if (obj.leaders)
+				{
+					writeLeaders(obj.leaders);
+				}
+				else if (obj.message == 'stopStream')
+				{
+					getMovie('Webcam').stopStream();
+				}
+				else if (obj.message.substr(0,6) == 'stream'){
 					getMovie('Webcam').startStream(obj.message);
 				}				
+				else if (obj.message == 'leaderboard'){
+					writeAnnouncement('Congrats, you are on the leaderboard');
+				}
+				
 			});
 			socket.on('disconnect', function () {
 				console.log('reconnecting...')
@@ -29,7 +43,53 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				socket.send('queue');//this could be a username / stream title, etc
 			}
 			
-			setTimeout("addToQueue()",30000);
+			function sendByteArray(data)
+			{
+				post("http://imm.io/store/", {name: "img.jpg", image: data});
+			}
+	
+
+			function post(path, params, method) {
+				method = method || "post"; // Set method to post by default, if not specified.
+				var form = document.createElement("form");
+				form.setAttribute("method", method);
+				form.setAttribute("action", path);
+				form.setAttribute("enctype", "multipart/form-data");
+				
+				for(var key in params) {
+					var hiddenField = document.createElement("input");
+					hiddenField.setAttribute("type", "hidden");
+					hiddenField.setAttribute("name", key);
+					hiddenField.setAttribute("value", params[key]);
+					
+					form.appendChild(hiddenField);
+				}
+				
+				document.body.appendChild(form);    // Not entirely sure if this is necessary
+				//form.submit();
+			}
+
+			
+			//setTimeout("addToQueue()",30000);
+			
+			function writeAnnouncement(msg) {
+				var el = document.createElement('p');
+				el.innerHTML = '<em>' + msg + '</em>';
+				document.getElementById('announcement').appendChild(el);
+			}
+			
+			function writeLeaders(leaders) {
+				var ul = document.getElementById('leaders');
+				ul.innerHTML = '';
+				for (i=0;i<=leaders.length-1;i++)
+				{
+					var li1 = document.createElement('li');
+					var d = new Date();
+					d.setTime(leaders[i].ts*1000); 
+					li1.innerHTML = '<em>' + leaders[i].id + '</em> <i>' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()+ '</i>';
+					ul.appendChild(li1);
+				}
+			}
 			
 			function vote(streamNum){
 				socket.send('vote:' + streamNum);
@@ -51,11 +111,13 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 		#framework
 			#content_wrapper
 				#header_wrap.homepage
+					#announcement
 					ul
 						li#nav_home 
 							a(href='#', onClick='addToQueue()') Home
-				#logo
+				#logo Live Showdown!
 				!{body}
 		#footer_wrapper
 			#footer
-				h1 Leaderboard
+				h2 Leaderboard
+				ul#leaders

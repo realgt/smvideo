@@ -52,9 +52,8 @@ h1 {
 	display: inline-block;
 }
 
-h2 {
-	font: 18px "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
-}
+h2 { font: 60px 'Cabin Sketch', arial, serif; color: #EFEFEF;}
+ul#leaders li { font: 40px 'Architects Daughter', serif;color: #EFEFEF; }
 
 h2.blog {
 	float: left;
@@ -170,10 +169,12 @@ a.a_back {
 div#logo {
 	width: 960px;
 	z-index: 9;
-	margin-top: 110px;
-	padding-top: 64px;
+	margin-top: 10px;
+	padding-top: 6px;
 	background-repeat: no-repeat;
 	position: absolute;
+	font: 80px 'Cabin Sketch', serif;
+	color: #772A08;
 }
 
 /********************************/

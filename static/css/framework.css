@@ -1,5 +1,5 @@
 body {
-	background-color: #545454;
+	background-color: #BE420E;
 }
 
 /*****************/
@@ -8,86 +8,26 @@ body {
 
 div#framework {
 	/*background: #48443b url(../images/Background.jpg) repeat-x center top;*/
-	background: #545454 url(../images/Background.png) no-repeat scroll center center;
-	height: 745px;
+	/*background: #545454 url(../images/Background.png) no-repeat scroll center center;*/
+	background: -webkit-gradient(
+	  radial, 50% 50%, 0, 50% 50%, 800, from(white), to(#efefef)
+	) #f90;
+	
+	background: -moz-radial-gradient(
+	  50% 50%, circle, white 0px, #efefef 800px
+	);
+	height: 681px;
 }
 
-/******************/
-/*   Navigation   */
-/******************/
-
-/*button*/
-#nav_home a { background: url(../images/navigation_classic.png) no-repeat 0 0; }
-#nav_about a { background: url(../images/navigation_classic.png) no-repeat -97px 0; }
-#nav_services a { background: url(../images/navigation_classic.png) no-repeat -192px 0; }
-#nav_blog a { background: url(../images/navigation_classic.png) no-repeat -289px 0; }
-#nav_contact a { background: url(../images/navigation_classic.png) no-repeat -385px 0; }
-
-/*over states*/
-#nav_home a:hover { background: url(../images/navigation_classic.png) no-repeat 0 -50px; }
-#nav_about a:hover { background: url(../images/navigation_classic.png) no-repeat -97px -50px; }
-#nav_services a:hover { background: url(../images/navigation_classic.png) no-repeat -192px -50px; }
-#nav_blog a:hover { background: url(../images/navigation_classic.png) no-repeat -289px -50px; }
-#nav_contact a:hover { background: url(../images/navigation_classic.png) no-repeat -385px -50px; }
-
-/*on states*/
-.homepage #nav_home a { background: url(../images/navigation_classic.png) no-repeat 0 -50px; }
-.aboutpage #nav_about a { background: url(../images/navigation_classic.png) no-repeat -97px -50px; }
-.servicespage #nav_services a { background: url(../images/navigation_classic.png) no-repeat -192px -50px; }
-.blogpage #nav_blog a { background: url(../images/navigation_classic.png) no-repeat -289px -50px; }
-.contactpage #nav_contact a { background: url(../images/navigation_classic.png) no-repeat -385px -50px; }
 
 /************/
 /*   Logo   */
 /************/
 
 div#logo {
-	background-image: url(../images/logo.png);
+
 }
 
-/***************************/
-/*   Site basics sidebar   */
-/***************************/
-
-button.next2 {
-	background: url(../images/ver_prev.png) no-repeat;
-}
-
-button.prev2 {
-	background: url(../images/ver_next.png) no-repeat;
-}
-
-/***************/
-/*   Buttons   */
-/***************/
-
-span.prev {
-	background: url(../images/hor_prev.png) no-repeat;
-}
-
-span.next {
-	background: url(../images/hor_next.png) no-repeat;
-}
-
-button.next_serv_page {
-	background: url(../images/hor_prev.png) no-repeat 0 0;
-}
-
-button.prev_serv_page {
-	background: url(../images/hor_next.png) no-repeat 0 0;
-}
-
-/****************/
-/*   Services   */
-/****************/
-
-button.prev_serv {
-	background: url(../images/hor_prev.png) no-repeat;
-}
-
-button.next_serv {
-	background: url(../images/hor_next.png) no-repeat;
-}
 
 /**************/
 /*   Footer   */
