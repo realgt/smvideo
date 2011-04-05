@@ -2,6 +2,7 @@ var connect = require('connect'), express = require('express'), sys = require('s
     "redis").createClient(), port = (process.env.PORT || 8081);
 
 var stat = __dirname + '/static';
+var sessionStore = new RedisStore();
 // Setup Express
 var server = express.createServer();
 server.configure(function() {
@@ -10,219 +11,268 @@ server.configure(function() {
   server.use(express.compiler( { src : stat, enable : [ 'sass' ] }));
   server.use(express.bodyParser());
   server.use(express.cookieParser());
-  server.use(express.session( { key : 'api-key', secret : 'api secret', store : new RedisStore }));
+  server.use(express.session( { key : 'sessionKey', secret : 'api secret', store : sessionStore }));
   server.use(express.static(stat));
   server.use(server.router);
 });
 
+// ****************
+// Server Variables
+// ****************
 vote1 = 0;
 vote2 = 0;
 flag1 = 0;
 flag2 = 0;
 
-var thresholdTime = 0;
-var sortedSet = "zSet";
-var leaderSet = "zLeaders";
-var q = [];
-var leaders = [];
-var stream1Client = '';
-var stream2Client = '';
-var loserClient = '';
+thresholdTime = 0;
+sortedSet = "zSet";
+leaderSet = "zLeaders";
+counter = "counter";
+appDb = "hApp";
+leaders = [];
+emptyStream1 = true;
+emptyStream2 = true;
+loserClient = '';
 
-// clean up the db
+// start clean up the db on a new start
+// case server fails
 console.log("Cleaning up the db!");
-redis_client.ZREMRANGEBYSCORE(sortedSet, "-inf", "+inf");
+redis_client.del(sortedSet);// removes the queue!!
+redis_client.hset(appDb, counter, 0);
+// end clean DB
+
+// get the time for the nth record (leader threshold)
+if (thresholdTime == 0) {
+  redis_client.zrevrange(leaderSet, 9, 9, "WITHSCORES", function(err, results) {
+    if (results[0] != undefined) {
+      thresholdTime = results[1];// score for the lowest item!
+    }
+  });
+}
 
 // Setup Socket.IO
 var io = io.listen(server);
 io.on('connection', function(client) {
 
-  // TODO: find a better place for this?
-    // get leaderboard
-    if (leaders.length == 0) {
-      redis_client.zrevrange(leaderSet, 0, 9, "WITHSCORES", function(err, results) {
-        leaders[0] = { id : results[0], ts : results[1] };
-        leaders[1] = { id : results[2], ts : results[3] };
-        leaders[2] = { id : results[4], ts : results[5] };
-        leaders[3] = { id : results[6], ts : results[7] };
-        leaders[4] = { id : results[8], ts : results[9] };
-        client.send( { leaders : leaders });
-      });
-    }
-    else {
+  /** * CLIENT CONNECT *** */
+  redis_client.HINCRBY(appDb, counter, 1);
+  if (leaders.length == 0) {
+    redis_client.zrevrange(leaderSet, 0, 9, "WITHSCORES", function(err, results) {
+      leaders[0] = { id : results[0], ts : results[1] };
+      leaders[1] = { id : results[2], ts : results[3] };
+      leaders[2] = { id : results[4], ts : results[5] };
+      leaders[3] = { id : results[6], ts : results[7] };
+      leaders[4] = { id : results[8], ts : results[9] };
       client.send( { leaders : leaders });
+    });
+  }
+  else {
+    client.send( { leaders : leaders });
+  }
+
+  /** * CLIENT DISCONNECT *** */
+  client.on('disconnect', function() {
+    // todo remove connection_id from hashmaan
+      removeFromQueue(client.sessionId);
+      redis_client.HINCRBY(appDb, counter, -1);
+    });
+
+  /** * CLIENT MESSAGE *** */
+  client.on('message', function(message) {
+    if (message.sessionKey) {
+      // TODO: do something with the session key!
+      // sessionStore.get(message.sessionKey, function(err, session) {
+      // console.log(session);
+      // });
+    }
+    else if (message.queue) {
+      addToQueue(client.sessionId);
+    }
+    else if (message.vote) {
+      vote(message.vote);
+    }
+    else if (message.flag) {
+      flag(message.flag);
     }
 
-    client.on('disconnect', function() {
-      // todo remove connection_id from hashmaan
-        removeFromQueue(client.sessionId);
-
-      });
-
-    client.on('message', function(message) {
-      var localMsg = message.substr(0, 4);
-      console.log('Client ' + client.sessionId + ' says : ' + message);
-
-      if (message == 'queue') {
-        addToQueue(client.sessionId);
-      }
-      else if (localMsg == 'vote') {
-        if (message == 'vote:1') {
-          vote1++;
-        }
-        else if (message == 'vote:2') {
-          vote2++;
-        }
-
-        logAnalytics("vote!");
-      }
-      else if (localMsg == 'flag') {
-        if (message == 'flag:1') {
-          flag1++;
-        }
-        else if (message == 'flag:2') {
-          flag2++;
-        }
-
-        logAnalytics("flag!");
-      }
-
-      redis_client.zcard(sortedSet, function(err, reply) {
-        console.log("ZCARD returns: " + reply);
-        if (vote1 > (reply / 2)) {
-          console.log("stream1 won!");
-          loserClient = stream2Client;
-          stream2Client = '';
-        }
-        else if (vote2 > (reply / 2)) {
-          console.log("stream2 won!");
-          loserClient = stream1Client;
-          stream1Client = '';
-        }
-
-        if (flag1 > (reply / 10)) {
-          console.log("stream1 flagged!");
-          loserClient = stream1Client;
-          stream1Client = '';
-        }
-        else if (flag2 > (reply / 10)) {
-          console.log("stream2 flagged!");
-          loserClient = stream2Client;
-          stream2Client = '';
-        }
-
-      });
-      if (loserClient != '') {
-        removeFromQueue(loserClient);
-        loserClient = '';
-        vote1 = 0;
-        vote2 = 0;
-        flag1 = 0;
-        flag2 = 0;
-        // TODO: broadcast the winner!
-        logAnalytics("LOSER LOG:");
-      }
-      handleQueue();
-    });
-    handleQueue();
+    if (message.vote || message.flag) {
+      determineLoser();
+    }
+  });
+  // cleanUpQueue();
   });
 
 function addToQueue(clientId) {
   var ts = Math.round(new Date().getTime() / 1000.0);
   redis_client.zadd(sortedSet, ts, clientId, function(err, response) {
     console.log(clientId + " added to queue with epoch: " + ts);
-  });
-  handleQueue();
-}
-
-function removeFromQueue(clientId) {
-
-  // get the time for the nth record (leader threshold)
-  if (thresholdTime == 0) {
-    redis_client.zrevrange(leaderSet, 10, 10, "WITHSCORES", function(err, results) {
-      if (results[0] != undefined) {
-        thresholdTime = results[1];// score for the 10th item!
+    // handle empty queues (usually on startup)
+      if (emptyStream1) {
+        addNext(1);
+        emptyStream1 = false;
+      }
+      else if (emptyStream2) {
+        addNext(2);
+        emptyStream2 = false;
       }
     });
-  }
-  // Get the record
-  redis_client.zscore(sortedSet, clientId, function(err, results) {
-    if (results != null) {
-      var ts = Math.round(new Date().getTime() / 1000.0);
-      // before we remove, lets check how long they broadcast for
-      var broadcastTime = ts - results;
+}
 
-      if (broadcastTime > thresholdTime) {
-        // found a winner!
+function vote(streamNum) {
+  if (streamNum == '1') {
+    vote1++;
+  }
+  else if (streamNum == '2') {
+    vote2++;
+  }
+  logAnalytics('vote received for: ' + streamNum);
+}
+
+function flag(streamNum) {
+  if (streamNum == '1') {
+    flag1++;
+  }
+  else if (streamNum == '2') {
+    flag2++;
+  }
+  logAnalytics("flag received for: " + streamNum);
+}
+
+function determineLoser() {
+  redis_client.hget(appDb, counter, function(err, counter) {
+    if (vote1 > (counter / 2)) {
+      removeLoser(2);
+      addNext(2);
+    }
+    else if (vote2 > (counter / 2)) {
+      removeLoser(1);
+      addNext(1);
+    }
+
+    if (flag1 > (counter / 10)) {
+      removeLoser(1);
+      addNext(1);
+    }
+    else if (flag2 > (counter / 10)) {
+      removeLoser(2);
+      addNext(2);
+    }
+
+  });
+  logAnalytics("determineLoser");
+}
+
+function addNext(streamNum) {
+  var streamId;
+  switch (streamNum)
+  {
+    case 1:
+      streamId = "stream1";
+      break;
+    case 2:
+      streamId = "stream2";
+      break;
+  }
+
+  redis_client.zrange(sortedSet, 0, 1, "WITHSCORES", function(err, results) {
+    if (results[0] != undefined) {
+      removeFromQueue(results[0]);
+      startStream(results[0], results[1], streamId);
+    }
+  });
+  logAnalytics("addNext with: " + streamNum);
+}
+function removeLoser(streamId) {
+
+  switch (streamId)
+  {
+    case 1:
+      redis_client.HMGET(appDb, "stream1Client", function(err, results) {
+        var loser = String(results).split("|");
+        stopStream(loser[0]);
+        redis_client.HSET(appDb, "stream1Client", "", function(err, setResult) {
+          determineLeaderboard(loser[0], loser[1]);
+        });
+      });
+      break;
+    case 2:
+      redis_client.HMGET(appDb, "stream2Client", function(err, results) {
+        var loser = String(results).split("|");
+        stopStream(loser[0]);
+        redis_client.HSET(appDb, "stream2Client", "", function(err, setResult) {
+          determineLeaderboard(loser[0], loser[1]);
+        });
+      });
+      break;
+  }
+  vote1 = 0;
+  vote2 = 0;
+  flag1 = 0;
+  flag2 = 0;
+  logAnalytics("removing loser from: " + streamId);
+}
+
+function determineLeaderboard(clientId, ts) {
+  if (clientId != undefined && ts != undefined) {
+    var now = Math.round(new Date().getTime() / 1000.0);
+    // before we remove, lets check how long they broadcast for
+    var broadcastTime = now - ts;
+    if (broadcastTime > thresholdTime) {// found a winner!
       console.log("adding a new item to the leaderboard! " + clientId);
       redis_client.zadd(leaderSet, broadcastTime, clientId);
       thresholdTime = 0;
-      leaders.length==0;
-      if (io.clients[clientId] != undefined)
+      leaders.length = 0;
+      if (io.clients[clientId] != undefined) {
         io.clients[clientId].send( { message : 'leaderboard' });
+      }
     }
-    redis_client.zrem(sortedSet, clientId, function(err, response) {
-      console.log(clientId + " removed from queue");
-      if (io.clients[clientId] != undefined)
-        io.clients[clientId].send( { message : 'stopStream' });
-    });
+    logAnalytics("determineLeaderboard with client: " + clientId + " ts: " + ts);
   }
+}
+function stopStream(clientId) {
+  if (io.clients[clientId] != undefined)
+    io.clients[clientId].send( { message : 'stopStream' });
+  logAnalytics("Stopstream sent to: " + clientId);
+}
+function startStream(clientId, ts, streamId) {
+  if (io.clients[clientId] != undefined)
+    io.clients[clientId].send( { message : streamId });
 
-} );
+  if (streamId == "stream1")
+    redis_client.hset(appDb, "stream1Client", clientId + "|" + ts);
+  else if (streamId == "stream2")
+    redis_client.hset(appDb, "stream2Client", clientId + "|" + ts);
 
-  if (stream1Client == clientId) {
-    stream1Client == '';
-  }
-  else if (stream2Client == clientId) {
-    stream2Client == '';
-  }
+  console.log(clientId + " should be publishing to: " + streamId);
 
-  handleQueue();
 }
 
-function handleQueue() {
+function removeFromQueue(clientId) {
+  if (clientId != undefined) {
+    redis_client.zrem(sortedSet, clientId, function(err, response) {
+      console.log(clientId + " removed from queue");
+    });
+  }
+}
+
+function cleanUpQueue() {
 
   redis_client.zrange(sortedSet, 0, 4, function(err, replies) {
     // check if they're even still connected!
-      replies.forEach(function(reply, i) {
+      replies.forEach(function(reply) {
         if (io.clients[reply] == undefined) {
           removeFromQueue(reply);
         }
       });
     });
-  var msg = '';
-  // now after queueing, voting, and flagging, lets send streams!
-  redis_client.zrange(sortedSet, 0, 1, function(err, replies) {
-    replies.forEach(function(reply, i) {
-      // logic to keep from switching cameras
-        if (stream1Client == '') {
-          stream1Client = reply;
-          if (io.clients[reply] != undefined)
-            io.clients[reply].send( { message : "stream1" });
-          console.log(reply + " should be publishing to stream1");
-        }
-        else if (stream2Client == '' && stream1Client != reply) {
-          stream2Client = reply;
-          if (io.clients[reply] != undefined)
-            io.clients[reply].send( { message : "stream2" });
-          console.log(reply + " should be publishing to stream2");
-        }
-      });
-
-  });
-  //io.broadcast({message: "stopStream"}, [stream1Client, stream2Client]);
-  logAnalytics("handleQueue");
-  msg = '';
 }
+
 function logAnalytics(method) {
   console.log("+++++++++++++\n" + method);
   console.log('Votes for Stream 1: ' + vote1);
   console.log('Votes for Stream 2: ' + vote2);
   console.log('Flags for Stream 1: ' + flag1);
   console.log('Flags for Stream 2: ' + flag2);
-  console.log("stream1Client " + stream1Client);
-  console.log("stream2Client " + stream2Client);
-  console.log("loserClient " + loserClient);
   redis_client.zrange(sortedSet, 0, -1, function(err, replies) {
     console.log(replies.length + " in queue:");
     replies.forEach(function(reply, i) {
@@ -241,7 +291,8 @@ server.listen(port);
 // /////////////////////////////////////////
 
 server.get('/', function(req, res) {
-  res.render('index.jade', { locals : { header : 'SharkVideo', footer : '&copy;SharkMob', title : 'SharkVideo' } });
+  req.session.cookie.expires = false;
+  res.render('index.jade', { locals : { header : 'SharkVideo', footer : '&copy;SharkMob', title : 'SharkVideo', sessionKey : req.sessionID } });
 });
 
 console.log('Listening on http://0.0.0.0:' + port);
