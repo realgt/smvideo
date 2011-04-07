@@ -37,7 +37,7 @@ loserClient = '';
 
 // start clean up the db on a new start
 // case server fails
-//console.log("Cleaning up the db!");
+console.log("Cleaning up the db!");
 redis_client.del(sortedSet);// removes the queue!!
 redis_client.hset(appDb, counter, 0);
 // end clean DB
@@ -83,7 +83,7 @@ io.on('connection', function(client) {
     if (message.sessionKey) {
       // TODO: do something with the session key!
       // sessionStore.get(message.sessionKey, function(err, session) {
-      // //console.log(session);
+      // console.log(session);
       // });
     }
     else if (message.queue) {
@@ -106,7 +106,7 @@ io.on('connection', function(client) {
 function addToQueue(clientId) {
   var ts = Math.round(new Date().getTime() / 1000.0);
   redis_client.zadd(sortedSet, ts, clientId, function(err, response) {
-    //console.log(clientId + " added to queue with epoch: " + ts);
+    console.log(clientId + " added to queue with epoch: " + ts);
     // handle empty queues (usually on startup)
       if (emptyStream1) {
         addNext(1);
@@ -220,7 +220,7 @@ function determineLeaderboard(clientId, ts) {
     // before we remove, lets check how long they broadcast for
     var broadcastTime = now - ts;
     if (broadcastTime > thresholdTime) {// found a winner!
-      //console.log("adding a new item to the leaderboard! " + clientId);
+      console.log("adding a new item to the leaderboard! " + clientId);
       redis_client.zadd(leaderSet, broadcastTime, clientId);
       thresholdTime = 0;
       leaders.length = 0;
@@ -245,14 +245,14 @@ function startStream(clientId, ts, streamId) {
   else if (streamId == "stream2")
     redis_client.hset(appDb, "stream2Client", clientId + "|" + ts);
 
-  //console.log(clientId + " should be publishing to: " + streamId);
+  console.log(clientId + " should be publishing to: " + streamId);
 
 }
 
 function removeFromQueue(clientId) {
   if (clientId != undefined) {
     redis_client.zrem(sortedSet, clientId, function(err, response) {
-      //console.log(clientId + " removed from queue");
+      console.log(clientId + " removed from queue");
     });
   }
 }
@@ -270,16 +270,16 @@ function cleanUpQueue() {
 }
 
 function logAnalytics(method) {
-  //console.log("+++++++++++++\n" + method);
-  //console.log('Votes for Stream 1: ' + vote1);
-  //console.log('Votes for Stream 2: ' + vote2);
-  //console.log('Flags for Stream 1: ' + flag1);
-  //console.log('Flags for Stream 2: ' + flag2);
+  console.log("+++++++++++++\n" + method);
+  console.log('Votes for Stream 1: ' + vote1);
+  console.log('Votes for Stream 2: ' + vote2);
+  console.log('Flags for Stream 1: ' + flag1);
+  console.log('Flags for Stream 2: ' + flag2);
   //redis_client.zrange(sortedSet, 0, -1, function(err, replies) {
-    //console.log(replies.length + " in queue:");
+    console.log(replies.length + " in queue:");
     //replies.forEach(function(reply, i) {
-      //console.log("    " + i + ": " + reply);
-      //console.log("+++++++++++++\n");
+      console.log("    " + i + ": " + reply);
+      console.log("+++++++++++++\n");
     //});
   //});
 
@@ -297,4 +297,4 @@ server.get('/', function(req, res) {
   res.render('index.jade', { locals : { header : 'SharkVideo', footer : '&copy;SharkMob', title : 'SharkVideo', sessionKey : req.sessionID } });
 });
 
-//console.log('Listening on http://0.0.0.0:' + port);
+console.log('Listening on http://0.0.0.0:' + port);

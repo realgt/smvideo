@@ -52,8 +52,8 @@ h1 {
 	display: inline-block;
 }
 
-h2 { font: 60px 'Cabin Sketch', arial, serif; color: #EFEFEF;}
-ul#leaders li { font: 40px 'Architects Daughter', serif;color: #EFEFEF; }
+h2 { font: 60px 'Cabin Sketch', arial, serif; color: #EFEFEF;text-shadow: 1px 2px 2px #000;}
+ul#leaders li { font: 40px 'Architects Daughter', serif;color: #EFEFEF;text-shadow: 1px 2px 2px #000; }
 
 h2.blog {
 	float: left;
@@ -174,6 +174,7 @@ div#logo {
 	background-repeat: no-repeat;
 	position: absolute;
 	font: 80px 'Cabin Sketch', serif;
+	text-shadow: 1px 2px 2px #DDD;
 	color: #772A08;
 }
 
