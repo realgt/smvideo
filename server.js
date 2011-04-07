@@ -14,6 +14,7 @@ server.configure(function() {
   server.use(express.session( { key : 'sessionKey', secret : 'api secret', store : sessionStore }));
   server.use(express.static(stat));
   server.use(server.router);
+  server.use('/', express.errorHandler({ dump: true, stack: true }));
 });
 
 // ****************
