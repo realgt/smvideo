@@ -36,7 +36,7 @@ loserClient = '';
 
 // start clean up the db on a new start
 // case server fails
-console.log("Cleaning up the db!");
+//console.log("Cleaning up the db!");
 redis_client.del(sortedSet);// removes the queue!!
 redis_client.hset(appDb, counter, 0);
 // end clean DB
@@ -82,7 +82,7 @@ io.on('connection', function(client) {
     if (message.sessionKey) {
       // TODO: do something with the session key!
       // sessionStore.get(message.sessionKey, function(err, session) {
-      // console.log(session);
+      // //console.log(session);
       // });
     }
     else if (message.queue) {
@@ -105,7 +105,7 @@ io.on('connection', function(client) {
 function addToQueue(clientId) {
   var ts = Math.round(new Date().getTime() / 1000.0);
   redis_client.zadd(sortedSet, ts, clientId, function(err, response) {
-    console.log(clientId + " added to queue with epoch: " + ts);
+    //console.log(clientId + " added to queue with epoch: " + ts);
     // handle empty queues (usually on startup)
       if (emptyStream1) {
         addNext(1);
@@ -135,7 +135,7 @@ function flag(streamNum) {
   else if (streamNum == '2') {
     flag2++;
   }
-  logAnalytics("flag received for: " + streamNum);
+  //logAnalytics("flag received for: " + streamNum);
 }
 
 function determineLoser() {
@@ -160,7 +160,7 @@ function determineLoser() {
 
   });
   //io.clients.broadcast({counter: counter, vote1: vote1, vote2: vote2, flag1: flag1, flag2 : flag2});
-  logAnalytics("determineLoser");
+  //logAnalytics("determineLoser");
 }
 
 function addNext(streamNum) {
@@ -181,7 +181,7 @@ function addNext(streamNum) {
       startStream(results[0], results[1], streamId);
     }
   });
-  logAnalytics("addNext with: " + streamNum);
+  //logAnalytics("addNext with: " + streamNum);
 }
 function removeLoser(streamId) {
 
@@ -210,7 +210,7 @@ function removeLoser(streamId) {
   vote2 = 0;
   flag1 = 0;
   flag2 = 0;
-  logAnalytics("removing loser from: " + streamId);
+  //logAnalytics("removing loser from: " + streamId);
 }
 
 function determineLeaderboard(clientId, ts) {
@@ -219,7 +219,7 @@ function determineLeaderboard(clientId, ts) {
     // before we remove, lets check how long they broadcast for
     var broadcastTime = now - ts;
     if (broadcastTime > thresholdTime) {// found a winner!
-      console.log("adding a new item to the leaderboard! " + clientId);
+      //console.log("adding a new item to the leaderboard! " + clientId);
       redis_client.zadd(leaderSet, broadcastTime, clientId);
       thresholdTime = 0;
       leaders.length = 0;
@@ -227,13 +227,13 @@ function determineLeaderboard(clientId, ts) {
         io.clients[clientId].send( { message : 'leaderboard' });
       }
     }
-    logAnalytics("determineLeaderboard with client: " + clientId + " ts: " + ts);
+    //logAnalytics("determineLeaderboard with client: " + clientId + " ts: " + ts);
   }
 }
 function stopStream(clientId) {
   if (io.clients[clientId] != undefined)
     io.clients[clientId].send( { message : 'stopStream' });
-  logAnalytics("Stopstream sent to: " + clientId);
+  //logAnalytics("Stopstream sent to: " + clientId);
 }
 function startStream(clientId, ts, streamId) {
   if (io.clients[clientId] != undefined)
@@ -244,14 +244,14 @@ function startStream(clientId, ts, streamId) {
   else if (streamId == "stream2")
     redis_client.hset(appDb, "stream2Client", clientId + "|" + ts);
 
-  console.log(clientId + " should be publishing to: " + streamId);
+  //console.log(clientId + " should be publishing to: " + streamId);
 
 }
 
 function removeFromQueue(clientId) {
   if (clientId != undefined) {
     redis_client.zrem(sortedSet, clientId, function(err, response) {
-      console.log(clientId + " removed from queue");
+      //console.log(clientId + " removed from queue");
     });
   }
 }
@@ -269,18 +269,18 @@ function cleanUpQueue() {
 }
 
 function logAnalytics(method) {
-  console.log("+++++++++++++\n" + method);
-  console.log('Votes for Stream 1: ' + vote1);
-  console.log('Votes for Stream 2: ' + vote2);
-  console.log('Flags for Stream 1: ' + flag1);
-  console.log('Flags for Stream 2: ' + flag2);
-  redis_client.zrange(sortedSet, 0, -1, function(err, replies) {
-    console.log(replies.length + " in queue:");
-    replies.forEach(function(reply, i) {
-      console.log("    " + i + ": " + reply);
-      console.log("+++++++++++++\n");
-    });
-  });
+  //console.log("+++++++++++++\n" + method);
+  //console.log('Votes for Stream 1: ' + vote1);
+  //console.log('Votes for Stream 2: ' + vote2);
+  //console.log('Flags for Stream 1: ' + flag1);
+  //console.log('Flags for Stream 2: ' + flag2);
+  //redis_client.zrange(sortedSet, 0, -1, function(err, replies) {
+    //console.log(replies.length + " in queue:");
+    //replies.forEach(function(reply, i) {
+      //console.log("    " + i + ": " + reply);
+      //console.log("+++++++++++++\n");
+    //});
+  //});
 
 }
 
@@ -296,4 +296,4 @@ server.get('/', function(req, res) {
   res.render('index.jade', { locals : { header : 'SharkVideo', footer : '&copy;SharkMob', title : 'SharkVideo', sessionKey : req.sessionID } });
 });
 
-console.log('Listening on http://0.0.0.0:' + port);
+//console.log('Listening on http://0.0.0.0:' + port);
