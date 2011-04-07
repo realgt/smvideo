@@ -276,10 +276,10 @@ function logAnalytics(method) {
   console.log('Flags for Stream 1: ' + flag1);
   console.log('Flags for Stream 2: ' + flag2);
   //redis_client.zrange(sortedSet, 0, -1, function(err, replies) {
-    console.log(replies.length + " in queue:");
+    //console.log(replies.length + " in queue:");
     //replies.forEach(function(reply, i) {
-      console.log("    " + i + ": " + reply);
-      console.log("+++++++++++++\n");
+      //console.log("    " + i + ": " + reply);
+      //console.log("+++++++++++++\n");
     //});
   //});
 
