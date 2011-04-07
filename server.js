@@ -159,6 +159,7 @@ function determineLoser() {
     }
 
   });
+  //io.clients.broadcast({counter: counter, vote1: vote1, vote2: vote2, flag1: flag1, flag2 : flag2});
   logAnalytics("determineLoser");
 }
 
