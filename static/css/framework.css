@@ -1,5 +1,5 @@
 body {
-	background-color: #BE420E;
+	/* background-color: #BE420E; */
 }
 
 /*****************/
@@ -16,7 +16,7 @@ div#framework {
 	background: -moz-radial-gradient(
 	  50% 50%, circle, white 0px, #efefef 800px
 	);
-	height: 681px;
+	height: 636px;
 }
 
 
@@ -27,7 +27,6 @@ div#framework {
 div#logo {
 
 }
-
 
 /**************/
 /*   Footer   */

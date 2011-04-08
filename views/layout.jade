@@ -9,15 +9,23 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 		meta(content='text/html; charset=utf-8', http-equiv='Content-Type')
 		script(src='/js/socket.io.min.js')
 		script(src='/js/cookie.js')
+		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js')
 		script(type='text/javascript')
 			
+			window.onload = function() {
+				var bg = ["#BE420E","#00248F","#001F17", "#206BA4", "#BBD9EE", "#3A4754"];
+				var bgcolor = bg[Math.floor(Math.random()*bg.length)]
+				document.body.style.background=bgcolor;
+				$("#logo").css("color", bgcolor);
+			}
+
 			//getMovie('Webcam').setServer('rtmp://rswcromero-2.local/live');
 			//getMovie('Webcam').setServer('rtmp://localhost/live');
 			var socket = new io.Socket(null, {port: 8081, rememberTransport: false});
 			
 			socket.on('connect', function(){
 				
-				socket.send({sessionKey: '!{sessionKey}'});
+				//socket.send({sessionKey: '!{sessionKey}'});
 			});
 			socket.connect();
 			socket.on('message', function(obj){
@@ -25,10 +33,15 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				{
 					writeLeaders(obj.leaders);
 				}
+				else if (obj.stats)
+				{
+					writeStats(obj.stats);
+				}
 				else if (obj.message)
 				{
 					if (obj.message == 'stopStream'){
 						getMovie('Webcam').stopStream();
+						addToQueue();
 					}
 					else if (obj.message.substr(0,6) == 'stream'){
 						getMovie('Webcam').startStream(obj.message);
@@ -85,9 +98,12 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 			//setTimeout("addToQueue()",30000);
 			
 			function writeAnnouncement(msg) {
-				var el = document.createElement('p');
-				el.innerHTML = '<em>' + msg + '</em>';
-				document.getElementById('announcement').appendChild(el);
+				$("#announcement").html('<em>' + msg + '</em>');
+			}
+			
+			function writeStats(stats)
+			{
+				$("#stats").html('<em>' + stats.viewers.toString() + ' live viewers!</em>');
 			}
 			
 			function writeLeaders(leaders) {
@@ -119,11 +135,12 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				}
 			}
 			
-	body		
+	body#body		
 		#framework
 			#content_wrapper
 				#header_wrap.homepage
-					#announcement
+					#announcement 
+					#stats
 					ul
 						li#nav_home 
 							a(href='#', onClick='addToQueue()') Home
