@@ -10,16 +10,17 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 		script(src='/js/cookie.js')
 		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js')
 		script(type='text/javascript')
-			
+			var isFlashReady = false;
 			window.onload = function() {
 				var bg = ["#BE420E","#00248F","#001F17", "#206BA4", "#BBD9EE", "#3A4754"];
 				var bgcolor = bg[Math.floor(Math.random()*bg.length)]
 				document.body.style.background=bgcolor;
 				$("#logo").css("color", bgcolor);
+				
+				
+				setTimeout("checkStream()",30000);
 			}
 
-			//getMovie('Webcam').setServer('rtmp://rswcromero-2.local/live');
-			//getMovie('Webcam').setServer('rtmp://localhost/live');
 			var socket = new io.Socket(null, {port: 8081, rememberTransport: false});
 			
 			socket.on('connect', function(){
@@ -43,11 +44,11 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				else if (data.message)
 				{
 					if (data.message == 'stopStream'){
-						getMovie('Webcam').stopStream();
+						stopStream();
 						addToQueue();
 					}
 					else if (data.message.substr(0,6) == 'stream'){
-						getMovie('Webcam').startStream(data.message);
+						startStream(data.message);
 					}				
 					else if (data.message == 'leaderboard'){
 						writeAnnouncement('Congrats, you are on the leaderboard');
@@ -64,6 +65,15 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				console.log('connection failed. reconnecting...')
 				socket.connect()
 			});
+			
+			function stopStream()
+			{
+				getMovie('Webcam').stopStream();
+			}
+			function startStream(message)
+			{
+				getMovie('Webcam').startStream(message);
+			}
 			function addToQueue(){
 				socket.send({queue: true});
 			}
@@ -98,7 +108,24 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 			}
 
 			
-			//setTimeout("addToQueue()",30000);
+			function checkStream()
+			{
+				if (!socket.connected){
+					stopStream();
+					socket.connect();
+				}
+			}
+			function asReady()
+			{
+				isFlashReady = true;
+			}
+			function getEntry()
+			{
+				if (isFlashReady)
+					getMovie('Webcam').getEntry();
+				else
+					setTimeout("getEntry()",1000);
+			}
 			function writeQueue(queue){
 				//TODO: put this somewhere!
 			}
