@@ -2,8 +2,7 @@
 html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 	head
 		title= title
-		link(media='screen', rel='stylesheet', href = '/css/base.css')
-		link(rel='stylesheet', href = '/css/framework.css')
+		link(rel='stylesheet', href = '/css/styles.css')
 		link(href='http://fonts.googleapis.com/css?family=Cabin+Sketch:bold', rel='stylesheet', type='text/css')
 		link(href='http://fonts.googleapis.com/css?family=Architects+Daughter:regular', rel='stylesheet', type='text/css')
 		meta(content='text/html; charset=utf-8', http-equiv='Content-Type')
@@ -28,25 +27,29 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				//socket.send({sessionKey: '!{sessionKey}'});
 			});
 			socket.connect();
-			socket.on('message', function(obj){
-				if (obj.leaders)
+			socket.on('message', function(data){
+				if (data.leaders)
 				{
-					writeLeaders(obj.leaders);
+					writeLeaders(data.leaders);
 				}
-				else if (obj.stats)
+				else if (data.stats)
 				{
-					writeStats(obj.stats);
+					writeStats(data.stats);
 				}
-				else if (obj.message)
+				else if (data.queue)
 				{
-					if (obj.message == 'stopStream'){
+					writeQueue(data.queue);
+				}
+				else if (data.message)
+				{
+					if (data.message == 'stopStream'){
 						getMovie('Webcam').stopStream();
 						addToQueue();
 					}
-					else if (obj.message.substr(0,6) == 'stream'){
-						getMovie('Webcam').startStream(obj.message);
+					else if (data.message.substr(0,6) == 'stream'){
+						getMovie('Webcam').startStream(data.message);
 					}				
-					else if (obj.message == 'leaderboard'){
+					else if (data.message == 'leaderboard'){
 						writeAnnouncement('Congrats, you are on the leaderboard');
 					}
 				}
@@ -96,14 +99,17 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 
 			
 			//setTimeout("addToQueue()",30000);
-			
+			function writeQueue(queue){
+				//TODO: put this somewhere!
+			}
 			function writeAnnouncement(msg) {
-				$("#announcement").html('<em>' + msg + '</em>');
+				$("#announceText").html('<em>' + msg + '</em>');
+				$("#announcement").fadeIn('slow');
 			}
 			
 			function writeStats(stats)
 			{
-				$("#stats").html('<em>' + stats.viewers.toString() + ' live viewers!</em>');
+				$("#stats").html('Viewers: ' +  stats.viewers.toString() + '<br>Votes 1: ' + stats.vote1.toString() + '<br>Votes 2: ' + stats.vote2.toString());
 			}
 			
 			function writeLeaders(leaders) {
@@ -135,18 +141,20 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				}
 			}
 			
-	body#body		
-		#framework
-			#content_wrapper
-				#header_wrap.homepage
-					#announcement 
-					#stats
+	body	
+		#announcement(style="display:none")
+			span#announceText
+			a(id="closeX", href="#", onClick="$('#announcement').fadeOut('slow')") [X]
+		#main_container
+			#content
+				#header_container.homepage
 					ul
 						li#nav_home 
-							a(href='#', onClick='addToQueue()') Home
+							a(href='#', onClick='addToQueue()') Add to Queue
 				#logo Live Showdown!
+				#stats
 				!{body}
-		#footer_wrapper
+		#footer_container
 			#footer
 				h2 Leaderboard
 				ul#leaders

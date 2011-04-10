@@ -51,16 +51,16 @@ io.on('connection', function(client) {
   sendLeaders(client, false);
 
   /** * CLIENT CONNECT *** */
-  redis_client.HINCRBY(appDb, counter, 1, function(err, result) {
-    sendStats(result, client);
+  redis_client.HINCRBY(appDb, counter, 1, function(err, counter) {
+    sendStats(counter);
   });
 
   /** * CLIENT DISCONNECT *** */
   client.on('disconnect', function() {
 
     removeFromQueue(client.sessionId);
-    redis_client.HINCRBY(appDb, counter, -1, function(err, result) {
-      sendStats(result, client);
+    redis_client.HINCRBY(appDb, counter, -1, function(err, counter) {
+      sendStats(counter);
     });
     cleanUpQueue();
   });
@@ -80,6 +80,7 @@ io.on('connection', function(client) {
     if (message.vote || message.flag) {
       determineLoser();
     }
+    sendStatsGetCounter();
   });
 });
 
@@ -89,8 +90,14 @@ io.on('connection', function(client) {
  * @param client
  *          the socket.io client object
  */
-function sendStats(counter, client) {
-  client.broadcast( { stats : { viewers : counter, vote1 : vote1, vote2 : vote2, flag1 : flag1, flag2 : flag2 } });
+function sendStats(counter) {
+  io.broadcast( { stats : { viewers : counter, vote1 : vote1, vote2 : vote2, flag1 : flag1, flag2 : flag2 } });
+}
+
+function sendStatsGetCounter() {
+  redis_client.hget(appDb, counter, function(err, counter) {
+    io.broadcast( { stats : { viewers : counter, vote1 : vote1, vote2 : vote2, flag1 : flag1, flag2 : flag2 } });
+  });
 }
 
 /*******************************************************************************
@@ -109,7 +116,7 @@ function sendLeaders(client, doBroadcast) {
       leaders[3] = { id : results[6], ts : results[7] };
       leaders[4] = { id : results[8], ts : results[9] };
       if (doBroadcast) {
-        client.broadcast( { leaders : leaders });
+        io.broadcast( { leaders : leaders });
       }
       else {
         client.send( { leaders : leaders });
@@ -119,7 +126,7 @@ function sendLeaders(client, doBroadcast) {
   }
   else {
     if (doBroadcast) {
-      client.broadcast( { leaders : leaders });
+      io.broadcast( { leaders : leaders });
     }
     else {
       client.send( { leaders : leaders });
@@ -232,12 +239,25 @@ function addNext(streamNum) {
   redis_client.zrange(sortedSet, 0, 1, "WITHSCORES", function(err, results) {
     if (results[0] != undefined) {
       removeFromQueue(results[0]);
-      startStream(results[0], results[1], streamId);
+      startStream(results[0], streamId);
     }
   });
   // logAnalytics("addNext with: " + streamNum);
 }
 
+/*******************************************************************************
+ * Calculates the wait time and sends it to the clientId
+ * @deprecated
+ */
+function sendWaitTime(clientId) {
+  redis_client.zcard(sortedSet, function(error, qlength) {
+    redis_client.zrank(sortedSet, clientId, function(error, rank) {
+      if (io.clients[clientId] != undefined) {
+        io.clients[clientId].send( { queue : { position : rank, qlength : qlength } });
+      }
+    });
+  });
+}
 /*******************************************************************************
  * Removes the losing client from the given streamId, updates the database
  * 
@@ -274,6 +294,10 @@ function removeLoser(streamId) {
   // logAnalytics("removing loser from: " + streamId);
 }
 
+function getNow()
+{
+  return Math.round(new Date().getTime() / 1000.0);
+}
 /*******************************************************************************
  * Determines if a client's broadcast time beats the threshold time and adds
  * them to the leaderboard
@@ -286,9 +310,9 @@ function removeLoser(streamId) {
  */
 function determineLeaderboard(clientId, ts) {
   if (clientId != undefined && ts != undefined) {
-    var now = Math.round(new Date().getTime() / 1000.0);
+    
     // before we remove, lets check how long they broadcast for
-    var broadcastTime = now - ts;
+    var broadcastTime = getNow() - ts;
 
     var lastLeaderTime = 0;
     if (leaders[4] != undefined && leaders[4].ts != undefined) {
@@ -332,14 +356,15 @@ function stopStream(clientId) {
  *          the stream they should publish on
  * @return
  */
-function startStream(clientId, ts, streamId) {
+function startStream(clientId, streamId) {
+  var now = getNow();
   if (io.clients[clientId] != undefined)
     io.clients[clientId].send( { message : streamId });
 
   if (streamId == "stream1")
-    redis_client.hset(appDb, "stream1Client", clientId + "|" + ts);
+    redis_client.hset(appDb, "stream1Client", clientId + "|" + now);
   else if (streamId == "stream2")
-    redis_client.hset(appDb, "stream2Client", clientId + "|" + ts);
+    redis_client.hset(appDb, "stream2Client", clientId + "|" + now);
 
   console.log(clientId + " should be publishing to: " + streamId);
 
