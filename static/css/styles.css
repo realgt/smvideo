@@ -7,11 +7,11 @@
 }
 
 body {
-	/* background-color: #BE420E; */
+	background-color: #000;
 }
 
 h2 { font: 60px 'Cabin Sketch', arial, serif; color: #EFEFEF;text-shadow: 1px 2px 2px #000;}
-ul#leaders li { font: 40px 'Architects Daughter', serif;color: #EFEFEF;text-shadow: 1px 2px 2px #000; }
+
 
 
 /************/
@@ -25,31 +25,41 @@ div#logo {
 	padding-top: 6px;
 	background-repeat: no-repeat;
 	position: absolute;
-	font: 80px 'Cabin Sketch', serif;
+	font: 80px 'Permanent Marker', serif;
 	text-shadow: 1px 2px 2px #DDD;
-	color: #772A08;
+	color: #efefef;
 }
 #stats {
 	float:right;
-	font: 20px 'Impact';
 	text-shadow: 1px 2px 2px #DDD;
-	border-top: 1px solid #96d1f8;
-	background: #65a9d7;
-	background: -webkit-gradient(linear, left top, left bottom, from(#3e779d), to(#65a9d7));
-	background: -moz-linear-gradient(top, #3e779d, #65a9d7);
-	padding: 20px 40px;
-	-webkit-border-radius: 8px;
-	-moz-border-radius: 8px;
-	border-radius: 8px;
-	-webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
-	-moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
-	box-shadow: rgba(0,0,0,1) 0 1px 0;
-	text-shadow: rgba(0,0,0,.4) 0 1px 0;
-	color: white;	
- 	font-size: 24px;
-	font-family: Georgia, serif;
-	text-decoration: none;
-	vertical-align: middle;
+	border-top: 1px solid #000000;
+  	background: #f59227;
+  	background: -webkit-gradient(linear, left top, left bottom, from(#f2e711), to(#f59227));
+  	background: -moz-linear-gradient(top, #f2e711, #f59227);
+  	padding: 20px 40px;
+  	-webkit-border-radius: 3px;
+  	-moz-border-radius: 3px;
+  	border-radius: 3px;
+  	-webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+  	-moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   	box-shadow: rgba(0,0,0,1) 0 1px 0;
+  	text-shadow: rgba(0,0,0,.4) 0 1px 0;
+  	color: #0d0d0d;
+   	font-size: 24px;
+   	font-family: Georgia, Serif;
+  	text-decoration: none;
+   	vertical-align: middle;
+}
+#stats:hover
+{
+	border-top-color: #f5e53b;
+  	background: #f5e53b;
+  	color: #969396;
+}
+#stats:active
+{
+	border-top-color: #f5c449;
+  	background: #f5c449;
 }
 
 /*****************/
@@ -96,13 +106,14 @@ div#logo {
 div#main_container {
 	/*background: #48443b url(../images/Background.jpg) repeat-x center top;*/
 	/*background: #545454 url(../images/Background.png) no-repeat scroll center center;*/
-	background: -webkit-gradient(
+	background: #000 url(../images/brickbg.jpg) no-repeat scroll center center;
+	/* background: -webkit-gradient(
 	  radial, 50% 50%, 0, 50% 50%, 800, from(white), to(#efefef)
 	) #f90;
 	
 	background: -moz-radial-gradient(
 	  50% 50%, circle, white 0px, #efefef 800px
-	);
+	); */
 	height: 636px;
 }
 
@@ -152,5 +163,23 @@ div#footer {
 	width: 960px;
 	height: 155px;
 	margin: auto;
+}
+ul#leaders li { 
+	font: 40px 'Architects Daughter', serif;color: #EFEFEF;
+	text-shadow: 1px 2px 2px #000; 
+}
+
+ul#leaders li div {
+	display:inline;
+}
+.leaderTime{
+	float:right;
+	text-align:right;
+	vertical-align:bottom;
+}
+.leaderImage{
+	width:120px;
+	heigth:90px;
+	border:0;
 }
 

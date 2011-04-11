@@ -76,6 +76,9 @@ io.on('connection', function(client) {
     else if (message.flag) {
       flag(message.flag);
     }
+    else if (message.entry) {
+      addEntry(client.sessionId, message.entry);
+    }
 
     if (message.vote || message.flag) {
       determineLoser();
@@ -134,6 +137,23 @@ function sendLeaders(client, doBroadcast) {
   }
 }
 
+/*******************************************************************************
+ * Adds entry to leaderboard!
+ */
+function addEntry(clientId, entry) {
+  redis_client.ZSCORE(leaderSet, clientId, function(error, broadcastTime) {
+    if (broadcastTime) {
+      redis_client.ZREM(leaderSet, clientId, function(error, result) {
+        if (result == 1) {
+          redis_client.zadd(leaderSet, broadcastTime, clientId + "|" + entry.name + "|" + entry.image + "|" + entry.url, function(error, reply) {
+            leaders.length = 0;
+            sendLeaders(null, true);
+          });
+        }
+      });
+    }
+  });
+}
 /*******************************************************************************
  * Adds a client to the queue
  * 
@@ -247,6 +267,7 @@ function addNext(streamNum) {
 
 /*******************************************************************************
  * Calculates the wait time and sends it to the clientId
+ * 
  * @deprecated
  */
 function sendWaitTime(clientId) {
@@ -294,8 +315,7 @@ function removeLoser(streamId) {
   // logAnalytics("removing loser from: " + streamId);
 }
 
-function getNow()
-{
+function getNow() {
   return Math.round(new Date().getTime() / 1000.0);
 }
 /*******************************************************************************
@@ -310,7 +330,7 @@ function getNow()
  */
 function determineLeaderboard(clientId, ts) {
   if (clientId != undefined && ts != undefined) {
-    
+
     // before we remove, lets check how long they broadcast for
     var broadcastTime = getNow() - ts;
 

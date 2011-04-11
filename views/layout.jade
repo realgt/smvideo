@@ -5,6 +5,7 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 		link(rel='stylesheet', href = '/css/styles.css')
 		link(href='http://fonts.googleapis.com/css?family=Cabin+Sketch:bold', rel='stylesheet', type='text/css')
 		link(href='http://fonts.googleapis.com/css?family=Architects+Daughter:regular', rel='stylesheet', type='text/css')
+		link(href='http://fonts.googleapis.com/css?family=Permanent+Marker:regular', rel='stylesheet', type='text/css')
 		meta(content='text/html; charset=utf-8', http-equiv='Content-Type')
 		script(src='/js/socket.io.min.js')
 		script(src='/js/cookie.js')
@@ -13,10 +14,10 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 		script(type='text/javascript')
 			var isFlashReady = false;
 			window.onload = function() {
-				var bg = ["#BE420E","#00248F","#001F17", "#206BA4", "#BBD9EE", "#3A4754"];
-				var bgcolor = bg[Math.floor(Math.random()*bg.length)]
-				document.body.style.background=bgcolor;
-				$("#logo").css("color", bgcolor);
+				//var bg = ["#BE420E","#00248F","#001F17", "#206BA4", "#BBD9EE", "#3A4754"];
+				//var bgcolor = bg[Math.floor(Math.random()*bg.length)]
+				//document.body.style.background=bgcolor;
+				//$("#logo").css("color", bgcolor);
 				
 				
 				setTimeout("checkStream()",30000);
@@ -53,6 +54,7 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 					}				
 					else if (data.message == 'leaderboard'){
 						writeAnnouncement('Congrats, you are on the leaderboard');
+						getEntry();
 					}
 				}
 				
@@ -69,11 +71,11 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 			
 			function stopStream()
 			{
-				getMovie('Webcam').stopStream();
+				getMovie().stopStream();
 			}
 			function startStream(message)
 			{
-				getMovie('Webcam').startStream(message);
+				getMovie().startStream(message);
 			}
 			function addToQueue(){
 				socket.send({queue: true});
@@ -82,32 +84,10 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				socket.send({queue: false});
 			}
 			
-			function sendByteArray(data)
+			function sendEntryData(name, url, image)
 			{
-				post("http://imm.io/store/", {name: "img.jpg", image: data});
+				socket.send({entry: {name: name, url: url, image: image}});
 			}
-	
-
-			function post(path, params, method) {
-				method = method || "post"; // Set method to post by default, if not specified.
-				var form = document.createElement("form");
-				form.setAttribute("method", method);
-				form.setAttribute("action", path);
-				form.setAttribute("enctype", "multipart/form-data");
-				
-				for(var key in params) {
-					var hiddenField = document.createElement("input");
-					hiddenField.setAttribute("type", "hidden");
-					hiddenField.setAttribute("name", key);
-					hiddenField.setAttribute("value", params[key]);
-					
-					form.appendChild(hiddenField);
-				}
-				
-				document.body.appendChild(form);    // Not entirely sure if this is necessary
-				//form.submit();
-			}
-
 			
 			function checkStream()
 			{
@@ -122,10 +102,8 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 			}
 			function getEntry()
 			{
-				if (isFlashReady)
-					getMovie('Webcam').getEntry();
-				else
-					setTimeout("getEntry()",1000);
+				getMovie().getEntry();
+
 			}
 			function writeQueue(queue){
 				//TODO: put this somewhere!
@@ -137,19 +115,34 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 			
 			function writeStats(stats)
 			{
-				$("#stats").html('Viewers: ' +  stats.viewers.toString() + '<br>Votes 1: ' + stats.vote1.toString() + '<br>Votes 2: ' + stats.vote2.toString());
+				//$("#stats").html('Viewers: ' +  stats.viewers.toString() + '<br>Votes 1: ' + stats.vote1.toString() + '<br>Votes 2: ' + stats.vote2.toString());
+				$("#stats").html('Viewers: 4,451,78' +  stats.viewers.toString());
 			}
 			
 			function writeLeaders(leaders) {
 				var ul = document.getElementById('leaders');
-				ul.innerHTML = '';
+				$(ul).html("");
 				for (i=0;i<=leaders.length-1;i++)
 				{
-					var li1 = document.createElement('li');
-					var min = Math.floor(leaders[i].ts / 60);
-					var sec = leaders[i].ts - (min * 60);
-					li1.innerHTML = '<em>' + leaders[i].id + '</em> <i>' + min + " min " + sec + " sec" + '</i>';
-					ul.appendChild(li1);
+					if(leaders[i].id != undefined)
+					{
+						var leaderData = leaders[i].id.split("|");
+						var id = leaderData[0];
+						var name = "Anonymous";
+						var image = "/images/unknown.jpg";
+						var url = "#";
+						if (leaderData[1]) name = leaderData[1];
+						if (leaderData[2]) image = leaderData[2];
+						if (leaderData[3]) url = leaderData[3];
+						
+						var li1 = document.createElement('li');
+						var min = Math.floor(leaders[i].ts / 60);
+						var sec = leaders[i].ts - (min * 60);
+						var ts = min + " min " + sec + " sec";
+						$(li1).html('<a alt="'+id+'" href="' + url + '"><img class="leaderImage" src="' + image + '"></a><div class="leaderName">' + name + '</div><div class="leaderTime">' + ts + '</div>');
+						ul.appendChild(li1);
+					}
+					
 				}
 			}
 			
@@ -161,12 +154,15 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				socket.send({flag: streamNum});
 			}
 			
-			function getMovie(movieName) {
-				if (navigator.appName.indexOf("Microsoft") != -1) {
-					return window[movieName];
-				} else {
-					return document[movieName];
-				}
+			function getMovie() {
+				if(isFlashReady)
+					if (navigator.appName.indexOf("Microsoft") != -1) {
+						return window['Webcam'];
+					} else {
+						return document['Webcam'];
+					}
+				else
+					setTimeout("getMovie()",100);				
 			}
 			
 	body	
@@ -179,11 +175,12 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 					ul
 						li#nav_home 
 							a(href='#', onClick='addToQueue()') Add to Queue
-				#logo Live Showdown!
+				#logo
+					img(src='/images/logo.png')
 				#stats
 				!{body}
 		#footer_container
 			#footer
 				h2 Leaderboard
 				ul#leaders
-				script(src='/js/adsense.js')
+				//script(src='/js/adsense.js')
