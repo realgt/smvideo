@@ -172,6 +172,10 @@ ul#leaders li {
 ul#leaders li div {
 	display:inline;
 }
+
+.leaderName{
+	padding: 0px 20px 20px 20px;
+}
 .leaderTime{
 	float:right;
 	text-align:right;

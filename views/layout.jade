@@ -144,6 +144,7 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 					}
 					
 				}
+				$("#leaderBoard").fadeIn('slow');
 			}
 			
 			function vote(streamNum){
@@ -181,6 +182,7 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				!{body}
 		#footer_container
 			#footer
-				h2 Leaderboard
-				ul#leaders
+				#leaderBoard(style="display:none")
+					h2 Leaderboard
+					ul#leaders
 				//script(src='/js/adsense.js')
