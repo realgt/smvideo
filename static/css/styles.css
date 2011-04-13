@@ -180,6 +180,7 @@ ul#leaders li div {
 	float:right;
 	text-align:right;
 	vertical-align:bottom;
+	padding-top: 50px;
 }
 .leaderImage{
 	width:120px;

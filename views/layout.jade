@@ -43,11 +43,18 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				{
 					writeQueue(data.queue);
 				}
+				else if (data.announcement)
+				{
+					writeAnnouncement(data.announcement);
+				}
+				else if (data.winner){
+					getMovie().setWinner(data.winner);
+				}
 				else if (data.message)
 				{
 					if (data.message == 'stopStream'){
 						stopStream();
-						addToQueue();
+						//addToQueue();
 					}
 					else if (data.message.substr(0,6) == 'stream'){
 						startStream(data.message);
@@ -68,6 +75,11 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				console.log('connection failed. reconnecting...')
 				socket.connect()
 			});
+			
+			function startedStreaming(streamId)
+			{
+				socket.send({streaming: streamId});
+			}
 			
 			function stopStream()
 			{
@@ -139,12 +151,12 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 						var min = Math.floor(leaders[i].ts / 60);
 						var sec = leaders[i].ts - (min * 60);
 						var ts = min + " min " + sec + " sec";
-						$(li1).html('<a alt="'+id+'" href="' + url + '"><img class="leaderImage" src="' + image + '"></a><div class="leaderName">' + name + '</div><div class="leaderTime">' + ts + '</div>');
+						$(li1).html('<a alt="'+id+'" href="' + url + '"><img target="_blank" class="leaderImage" src="' + image + '"></a><div class="leaderName">' + name + '</div><div class="leaderTime">' + ts + '</div>');
 						ul.appendChild(li1);
 					}
 					
 				}
-				$("#leaderBoard").fadeIn('slow');
+				if (leaders[0].id != undefined) $("#leaderBoard").fadeIn('slow');
 			}
 			
 			function vote(streamNum){
@@ -183,6 +195,6 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 		#footer_container
 			#footer
 				#leaderBoard(style="display:none")
-					h2 Leaderboard
+					h2 Hall of Fame
 					ul#leaders
 				//script(src='/js/adsense.js')

@@ -28,6 +28,7 @@ flag2 = 0;
 
 sortedSet = "zSet";
 leaderSet = "zLeaders";
+tmpSet = "zTemp";
 counter = "counter";
 appDb = "hApp";
 leaders = [];
@@ -78,6 +79,9 @@ io.on('connection', function(client) {
     }
     else if (message.entry) {
       addEntry(client.sessionId, message.entry);
+    }
+    else if (message.streaming) {
+      confirmedStreaming(client.sessionId, message.streaming);
     }
 
     if (message.vote || message.flag) {
@@ -141,18 +145,18 @@ function sendLeaders(client, doBroadcast) {
  * Adds entry to leaderboard!
  */
 function addEntry(clientId, entry) {
-  redis_client.ZSCORE(leaderSet, clientId, function(error, broadcastTime) {
+  redis_client.ZSCORE(tmpSet, clientId, function(error, broadcastTime) {
     if (broadcastTime) {
-      redis_client.ZREM(leaderSet, clientId, function(error, result) {
-        if (result == 1) {
-          redis_client.zadd(leaderSet, broadcastTime, clientId + "|" + entry.name + "|" + entry.image + "|" + entry.url, function(error, reply) {
-            leaders.length = 0;
-            sendLeaders(null, true);
-          });
-        }
+      redis_client.ZREM(tmpSet, clientId);// remove from tmpSet
+      redis_client.zadd(leaderSet, broadcastTime, clientId + "|" + entry.name + "|" + entry.image + "|" + entry.url, function(error, reply) {
+        console.log("adding a new item to the leaderboard! " + clientId);
+        thresholdTime = 0;
+        leaders.length = 0;
+        sendLeaders(null, true);
       });
     }
   });
+
 }
 /*******************************************************************************
  * Adds a client to the queue
@@ -164,7 +168,7 @@ function addToQueue(clientId) {
   var ts = Math.round(new Date().getTime() / 1000.0);
   redis_client.zadd(sortedSet, ts, clientId, function(err, response) {
     console.log(clientId + " added to queue with epoch: " + ts);
-
+    io.clients[clientId].send( { announcement : "You have been added to the queue!" })
     if (emptyStream1) {// handle empty queues (usually on startup)
         addNext(1);
         emptyStream1 = false;
@@ -238,6 +242,14 @@ function determineLoser() {
 }
 
 /*******************************************************************************
+ * Broadcasts to everyone the winning stream
+ */
+
+function broadcastWinner(streamNum)
+{
+  io.broadcast({winner: streamNum});
+}
+/*******************************************************************************
  * Finds the next person in the queue and adds them to the stream that is now
  * empty
  * 
@@ -294,7 +306,7 @@ function removeLoser(streamId) {
         var loser = String(results).split("|");
         stopStream(loser[0]);
         redis_client.HSET(appDb, "stream1Client", "", function(err, setResult) {
-          determineLeaderboard(loser[0], loser[1]);
+          determineLeaderboard(loser[0], loser[1], 1);
         });
       });
       break;
@@ -303,7 +315,7 @@ function removeLoser(streamId) {
         var loser = String(results).split("|");
         stopStream(loser[0]);
         redis_client.HSET(appDb, "stream2Client", "", function(err, setResult) {
-          determineLeaderboard(loser[0], loser[1]);
+          determineLeaderboard(loser[0], loser[1], 2);
         });
       });
       break;
@@ -328,7 +340,8 @@ function getNow() {
  *          TimeStamp in milliseconds -eg. Math.round(new Date().getTime() /
  *          1000.0);
  */
-function determineLeaderboard(clientId, ts) {
+
+function determineLeaderboard(clientId, ts, streamNum) {
   if (clientId != undefined && ts != undefined) {
 
     // before we remove, lets check how long they broadcast for
@@ -340,11 +353,8 @@ function determineLeaderboard(clientId, ts) {
     }
 
     if (broadcastTime > lastLeaderTime) {
-      console.log("adding a new item to the leaderboard! " + clientId);
-      redis_client.zadd(leaderSet, broadcastTime, clientId);
-      thresholdTime = 0;
-      leaders.length = 0;
-
+      redis_client.zadd(tmpSet, broadcastTime, clientId);
+      // prompt for them to be on the Leaderboard
       if (io.clients[clientId] != undefined) {
         io.clients[clientId].send( { message : 'leaderboard' });
         sendLeaders(io.clients[clientId], true);
@@ -377,19 +387,20 @@ function stopStream(clientId) {
  * @return
  */
 function startStream(clientId, streamId) {
-  var now = getNow();
+
   if (io.clients[clientId] != undefined)
     io.clients[clientId].send( { message : streamId });
+}
 
+function confirmedStreaming(clientId, streamId) {
+  var now = getNow();
   if (streamId == "stream1")
     redis_client.hset(appDb, "stream1Client", clientId + "|" + now);
   else if (streamId == "stream2")
     redis_client.hset(appDb, "stream2Client", clientId + "|" + now);
 
   console.log(clientId + " should be publishing to: " + streamId);
-
 }
-
 /*******************************************************************************
  * Removes a client from the Queue (the database's sortedSet)
  * 
