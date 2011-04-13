@@ -12,7 +12,24 @@ body {
 
 h2 { font: 60px 'Cabin Sketch', arial, serif; color: #EFEFEF;text-shadow: 1px 2px 2px #000;}
 
-
+#newbar{
+	position:relative;z-index:100;
+	background:#111 url(/images/barbg.jpg) repeat-x 0 0;
+	color:#ccc;
+	box-shadow:0 1px 2px rgba(0,0,0,0.5);
+	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.5);
+	min-height:40px;
+}
+#newbar2{width:936px;
+margin:0 auto;
+padding:10px 0;
+/* font:bold 13px/19px "Helvetica Neue",Arial,Sans-serif; */
+font: bold 24px/19px "Architects Daughter",Arial,Sans-serif;
+text-align:left;}
+#newbar strong{color:#fff;}
+#newbar a{color:#7df;}
+#newbar a.hashtag{color:#999;font-weight:normal;}
+#newbar a.hashtag:hover{color:#ccc;}
 
 /************/
 /*   Logo   */
@@ -36,7 +53,7 @@ div#logo {
   	background: #f59227;
   	background: -webkit-gradient(linear, left top, left bottom, from(#f2e711), to(#f59227));
   	background: -moz-linear-gradient(top, #f2e711, #f59227);
-  	padding: 20px 40px;
+  	padding: 5px 20px;
   	-webkit-border-radius: 3px;
   	-moz-border-radius: 3px;
   	border-radius: 3px;
@@ -45,7 +62,7 @@ div#logo {
    	box-shadow: rgba(0,0,0,1) 0 1px 0;
   	text-shadow: rgba(0,0,0,.4) 0 1px 0;
   	color: #0d0d0d;
-   	font-size: 24px;
+   	font-size: 22px;
    	font-family: Georgia, Serif;
   	text-decoration: none;
    	vertical-align: middle;
@@ -106,7 +123,7 @@ div#logo {
 div#main_container {
 	/*background: #48443b url(../images/Background.jpg) repeat-x center top;*/
 	/*background: #545454 url(../images/Background.png) no-repeat scroll center center;*/
-	background: #000 url(../images/brickbg.jpg) no-repeat scroll center center;
+	/* background: #000 url(../themes/graffiti/background.jpg) no-repeat scroll center center; */
 	/* background: -webkit-gradient(
 	  radial, 50% 50%, 0, 50% 50%, 800, from(white), to(#efefef)
 	) #f90;

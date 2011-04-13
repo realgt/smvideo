@@ -3,6 +3,7 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 	head
 		title= title
 		link(rel='stylesheet', href = '/css/styles.css')
+		link(rel='stylesheet', href = '/themes/'+theme+'/theme.css')
 		link(href='http://fonts.googleapis.com/css?family=Cabin+Sketch:bold', rel='stylesheet', type='text/css')
 		link(href='http://fonts.googleapis.com/css?family=Architects+Daughter:regular', rel='stylesheet', type='text/css')
 		link(href='http://fonts.googleapis.com/css?family=Permanent+Marker:regular', rel='stylesheet', type='text/css')
@@ -14,10 +15,10 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 		script(type='text/javascript')
 			var isFlashReady = false;
 			window.onload = function() {
-				//var bg = ["#BE420E","#00248F","#001F17", "#206BA4", "#BBD9EE", "#3A4754"];
-				//var bgcolor = bg[Math.floor(Math.random()*bg.length)]
+				//var bg = ["graffiti","boxing","boxing","boxing","boxing"];
+				//var theme = bg[Math.floor(Math.random()*bg.length)]
 				//document.body.style.background=bgcolor;
-				//$("#logo").css("color", bgcolor);
+				//$("#main_container").css("background", "#000 url(../themes/"+theme+"/background.jpg) no-repeat scroll center center;");
 				
 				
 				setTimeout("checkStream()",30000);
@@ -54,7 +55,7 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				{
 					if (data.message == 'stopStream'){
 						stopStream();
-						//addToQueue();
+						addToQueue();
 					}
 					else if (data.message.substr(0,6) == 'stream'){
 						startStream(data.message);
@@ -179,6 +180,9 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 			}
 			
 	body	
+		#newbar
+			#newbar2 LIVE SHOWDOWN		
+				#stats		
 		#announcement(style="display:none")
 			span#announceText
 			a(id="closeX", href="#", onClick="$('#announcement').fadeOut('slow')") [X]
@@ -189,8 +193,7 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 						li#nav_home 
 							a(href='#', onClick='addToQueue()') Add to Queue
 				#logo
-					img(src='/images/logo.png')
-				#stats
+					//img(src='/images/logo.png')
 				!{body}
 		#footer_container
 			#footer

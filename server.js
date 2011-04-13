@@ -454,13 +454,15 @@ function logAnalytics(method) {
 
 // Start the server
 server.listen(port);
+var bg = ["graffiti","boxing","graffiti","boxing","boxing"];
 
 /*******************************************************************************
  * Routes served by the web server
  */
 server.get('/', function(req, res) {
   req.session.cookie.expires = false;
-  res.render('index.jade', { locals : { header : 'SharkVideo', footer : '&copy;SharkMob', title : 'SharkVideo', sessionKey : req.sessionID } });
+  var theme = bg[Math.floor(Math.random()*bg.length)]
+  res.render('index.jade', { locals : { header : 'SharkVideo', footer : '&copy;SharkMob', title : 'SharkVideo', sessionKey : req.sessionID, theme: theme } });
 });
 
 console.log('Listening on http://0.0.0.0:' + port);
