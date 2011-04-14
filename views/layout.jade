@@ -39,6 +39,7 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				else if (data.stats)
 				{
 					writeStats(data.stats);
+					getMovie().sendStats(data.stats.viewers + "|" + data.stats.vote1 + "|" + data.stats.vote2 + "|" + data.stats.flag1 +"|"+ data.stats.flag2);
 				}
 				else if (data.queue)
 				{
