@@ -1,6 +1,10 @@
 body {
 	background-color: #000 !important;
 }
+#logo span{
+	visibility:hidden;
+	display:none;
+}
 div#main_container {
 	background: #000 url(background.jpg) no-repeat scroll center center;
 }

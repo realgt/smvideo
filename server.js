@@ -454,7 +454,7 @@ function logAnalytics(method) {
 
 // Start the server
 server.listen(port);
-var bg = ["graffiti","boxing","graffiti","boxing","boxing"];
+var bg = ["graffiti","boxing","nebula", "city"];
 
 /*******************************************************************************
  * Routes served by the web server
@@ -462,7 +462,7 @@ var bg = ["graffiti","boxing","graffiti","boxing","boxing"];
 server.get('/', function(req, res) {
   req.session.cookie.expires = false;
   var theme = bg[Math.floor(Math.random()*bg.length)]
-  res.render('index.jade', { locals : { header : 'SharkVideo', footer : '&copy;SharkMob', title : 'SharkVideo', sessionKey : req.sessionID, theme: theme } });
+  res.render('index.jade', { locals : { header : 'Live Showdown', footer : '&copy;SharkMob', title : 'Live Showdown', sessionKey : req.sessionID, theme: theme } });
 });
 
 console.log('Listening on http://0.0.0.0:' + port);

@@ -42,7 +42,7 @@ div#logo {
 	padding-top: 6px;
 	background-repeat: no-repeat;
 	position: absolute;
-	font: 80px 'Permanent Marker', serif;
+	font: 80px 'Architects Daughter', serif;
 	text-shadow: 1px 2px 2px #DDD;
 	color: #efefef;
 }
@@ -108,6 +108,10 @@ div#logo {
     margin: 0;
     padding: 3px 0 2px 0;
     font-weight: bold;
+}
+#announcement a{
+	text-decoration: none;
+	font-family: Courier, monospace;	
 }
 #closeX {
 	float: right;

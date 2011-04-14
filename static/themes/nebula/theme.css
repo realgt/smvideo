@@ -1,0 +1,10 @@
+body {
+	background-color: #000 !important;
+}
+#logo{
+	font: 80px 'Orbitron', monospace !important;
+	text-align:center;	
+}
+div#main_container {
+	background: url(background.jpg) no-repeat scroll center center #000103;
+}
