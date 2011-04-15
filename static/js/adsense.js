@@ -1,8 +1,8 @@
-google_ad_client = "ca-pub-1153012017929398";
-/* Leaderboard */
-google_ad_slot = "7328190306";
-google_ad_width = 728;
-google_ad_height = 90;
+google_ad_client = "ca-pub-5678290995318849";
+/* Video Ads */
+google_ad_slot = "5532790022";
+google_ad_width = 336;
+google_ad_height = 280;
 
 (function(){var g=null,h=(new Date).getTime();var i=this,aa=function(a,b){var c=a.split("."),d=i;!(c[0]in d)&&d.execScript&&d.execScript("var "+c[0]);for(var e;c.length&&(e=c.shift());)!c.length&&b!==void 0?d[e]=b:d=d[e]?d[e]:d[e]={}},ba=function(a){return a.call.apply(a.bind,arguments)},ca=function(a,b){var c=b||i;if(arguments.length>2){var d=Array.prototype.slice.call(arguments,2);return function(){var b=Array.prototype.slice.call(arguments);Array.prototype.unshift.apply(b,d);return a.apply(c,b)}}else return function(){return a.apply(c,arguments)}},
 j=function(){j=Function.prototype.bind&&Function.prototype.bind.toString().indexOf("native code")!=-1?ba:ca;return j.apply(g,arguments)};var da=/&/g,ea=/</g,fa=/>/g,ha=/\"/g,k={"\0":"\\0","\u0008":"\\b","\u000c":"\\f","\n":"\\n","\r":"\\r","\t":"\\t","\u000b":"\\x0B",'"':'\\"',"\\":"\\\\"},n={"'":"\\'"},r=function(a,b){if(a<b)return-1;else if(a>b)return 1;return 0};var s,t,u,x,z=function(){return i.navigator?i.navigator.userAgent:g};x=u=t=s=!1;var A;if(A=z()){var ia=i.navigator;s=A.indexOf("Opera")==0;t=!s&&A.indexOf("MSIE")!=-1;u=!s&&A.indexOf("WebKit")!=-1;x=!s&&!u&&ia.product=="Gecko"}var B=t,D=x,ja=u,E;

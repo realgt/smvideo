@@ -309,6 +309,7 @@ function removeLoser(streamId) {
           determineLeaderboard(loser[0], loser[1], 1);
         });
       });
+      broadcastWinner(2);
       break;
     case 2:
       redis_client.HGET(appDb, "stream2Client", function(err, results) {
@@ -318,6 +319,7 @@ function removeLoser(streamId) {
           determineLeaderboard(loser[0], loser[1], 2);
         });
       });
+      broadcastWinner(1);
       break;
   }
   vote1 = 0;
@@ -412,6 +414,13 @@ function removeFromQueue(clientId) {
     redis_client.zrem(sortedSet, clientId, function(err, response) {
       console.log(clientId + " removed from queue");
     });
+    //now check if they were broadcasting!
+//    redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
+//      if(clientId == results[0])
+//        removeLoser(1);
+//      else if (clientId == results[1])
+//        removeLoser(2);
+//    });
   }
 }
 

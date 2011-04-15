@@ -152,6 +152,12 @@ div#home {
 	z-index: 0;
 }
 
+div#da_container{
+	text-align:center;
+	margin: auto auto;
+	padding-top:50px;
+}
+
 div#showcase_home {
 	/* background-image: url(../images/BG_home_showcase.png); */
 	height: 480px;

@@ -21,7 +21,7 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				//$("#main_container").css("background", "#000 url(../themes/"+theme+"/background.jpg) no-repeat scroll center center;");
 				
 				
-				setTimeout("checkStream()",30000);
+				setInterval("checkStream()",30000);
 			}
 
 			var socket = new io.Socket(null, {port: 8081, rememberTransport: false});
@@ -39,7 +39,7 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				else if (data.stats)
 				{
 					writeStats(data.stats);
-					getMovie().sendStats(data.stats.viewers + "|" + data.stats.vote1 + "|" + data.stats.vote2 + "|" + data.stats.flag1 +"|"+ data.stats.flag2);
+					getMovie().sendStats(data.stats.viewers.toString() + "|" + data.stats.vote1.toString() + "|" + data.stats.vote2.toString() + "|" + data.stats.flag1.toString() +"|"+ data.stats.flag2.toString());
 				}
 				else if (data.queue)
 				{
@@ -50,7 +50,11 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 					writeAnnouncement(data.announcement);
 				}
 				else if (data.winner){
+					toggle_sda();
+					
+					setTimeout("toggle_sda()",5000 );
 					getMovie().setWinner(data.winner);
+					
 				}
 				else if (data.message)
 				{
@@ -77,6 +81,21 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				console.log('connection failed. reconnecting...')
 				socket.connect()
 			});
+			
+			function toggle_sda()
+			{
+				if ($("#da_container").is(":hidden")){
+					$("#showcase_home").css({opacity: 0, visibility: "visible"})
+				}
+				else
+				{
+					$("#showcase_home").css({opacity: 100, visibility: "visible"})
+				}
+				$("#da_container").toggle();
+				//$("#showcase_home").toggle();
+				
+				
+			}
 			
 			function startedStreaming(streamId)
 			{
@@ -202,4 +221,3 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				#leaderBoard(style="display:none")
 					h2 Hall of Fame
 					ul#leaders
-				//script(src='/js/adsense.js')
