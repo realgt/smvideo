@@ -39,7 +39,12 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				else if (data.stats)
 				{
 					writeStats(data.stats);
-					getMovie().sendStats(data.stats.viewers.toString() + "|" + data.stats.vote1.toString() + "|" + data.stats.vote2.toString() + "|" + data.stats.flag1.toString() +"|"+ data.stats.flag2.toString());
+					var viewers = data.stats.viewers.toString();
+					var vote1 = data.stats.vote1.toString();
+					var vote2 = data.stats.vote2.toString();
+					var flag1 = data.stats.flag1.toString();
+					var flag2 = data.stats.flag2.toString(); 
+					getMovie().setGameStats(""+viewers + "|" + vote1+ "|" +vote2+ "|"+ flag1+"|"+flag2+"");
 				}
 				else if (data.queue)
 				{
@@ -153,8 +158,8 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 			}
 			
 			function writeLeaders(leaders) {
-				var ul = document.getElementById('leaders');
-				$(ul).html("");
+				$("#leaders").html("");
+				if (leaders[0].id != undefined) $("#leaderBoard").show();
 				for (i=0;i<=leaders.length-1;i++)
 				{
 					if(leaders[i].id != undefined)
@@ -173,11 +178,11 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 						var sec = leaders[i].ts - (min * 60);
 						var ts = min + " min " + sec + " sec";
 						$(li1).html('<a alt="'+id+'" href="' + url + '"><img target="_blank" class="leaderImage" src="' + image + '"></a><div class="leaderName">' + name + '</div><div class="leaderTime">' + ts + '</div>');
-						ul.appendChild(li1);
+						$("#leaders").append(li1);
 					}
 					
 				}
-				if (leaders[0].id != undefined) $("#leaderBoard").fadeIn('slow');
+				
 			}
 			
 			function vote(streamNum){
