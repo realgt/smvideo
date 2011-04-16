@@ -3,210 +3,21 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 	head
 		title= title
 		link(rel='stylesheet', href = '/themes/'+theme+'/theme.css')
-		link(rel='stylesheet', href = '/css/styles.css')
+		link(rel='stylesheet', href = '/css/min/styles.css')
 		link(href='http://fonts.googleapis.com/css?family=Cabin+Sketch:bold', rel='stylesheet', type='text/css')
 		link(href='http://fonts.googleapis.com/css?family=Architects+Daughter:regular', rel='stylesheet', type='text/css')
 		link(href='http://fonts.googleapis.com/css?family=Orbitron', rel='stylesheet', type='text/css')
 		meta(content='text/html; charset=utf-8', http-equiv='Content-Type')
 		script(src='/js/socket.io.min.js')
-		script(src='/js/cookie.js')
 		script(src='/js/analytics.js')
 		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js')
-		script(type='text/javascript')
-			var isFlashReady = false;
-			window.onload = function() {
-				//var bg = ["graffiti","boxing","boxing","boxing","boxing"];
-				//var theme = bg[Math.floor(Math.random()*bg.length)]
-				//document.body.style.background=bgcolor;
-				//$("#main_container").css("background", "#000 url(../themes/"+theme+"/background.jpg) no-repeat scroll center center;");
-				
-				
-				setInterval("checkStream()",30000);
-			}
-
-			var socket = new io.Socket(null, {port: 8081, rememberTransport: false});
+		script(src='/js/app.js')
 			
-			socket.on('connect', function(){
-				
-				//socket.send({sessionKey: '!{sessionKey}'});
-			});
-			socket.connect();
-			socket.on('message', function(data){
-				if (data.leaders)
-				{
-					writeLeaders(data.leaders);
-				}
-				else if (data.stats)
-				{
-					writeStats(data.stats);
-					var viewers = data.stats.viewers.toString();
-					var vote1 = data.stats.vote1.toString();
-					var vote2 = data.stats.vote2.toString();
-					var flag1 = data.stats.flag1.toString();
-					var flag2 = data.stats.flag2.toString(); 
-					getMovie().setGameStats(""+viewers + "|" + vote1+ "|" +vote2+ "|"+ flag1+"|"+flag2+"");
-				}
-				else if (data.queue)
-				{
-					writeQueue(data.queue);
-				}
-				else if (data.announcement)
-				{
-					writeAnnouncement(data.announcement);
-				}
-				else if (data.winner){
-					toggle_sda();
-					
-					setTimeout("toggle_sda()",5000 );
-					getMovie().setWinner(data.winner);
-					
-				}
-				else if (data.message)
-				{
-					if (data.message == 'stopStream'){
-						stopStream();
-						addToQueue();
-					}
-					else if (data.message.substr(0,6) == 'stream'){
-						startStream(data.message);
-					}				
-					else if (data.message == 'leaderboard'){
-						writeAnnouncement('Congrats, you are on the leaderboard');
-						getEntry();
-					}
-				}
-				
-				
-			});
-			socket.on('disconnect', function () {
-				console.log('reconnecting...')
-				socket.connect()
-			});
-			socket.on('connect_failed', function () {
-				console.log('connection failed. reconnecting...')
-				socket.connect()
-			});
-			
-			function toggle_sda()
-			{
-				if ($("#da_container").is(":hidden")){
-					$("#showcase_home").css({opacity: 0, visibility: "visible"})
-				}
-				else
-				{
-					$("#showcase_home").css({opacity: 100, visibility: "visible"})
-				}
-				$("#da_container").toggle();
-				//$("#showcase_home").toggle();
-				
-				
-			}
-			
-			function startedStreaming(streamId)
-			{
-				socket.send({streaming: streamId});
-			}
-			
-			function stopStream()
-			{
-				getMovie().stopStream();
-			}
-			function startStream(message)
-			{
-				getMovie().startStream(message);
-			}
-			function addToQueue(){
-				socket.send({queue: true});
-			}
-			function removeFromQueue(){
-				socket.send({queue: false});
-			}
-			
-			function sendEntryData(name, url, image)
-			{
-				socket.send({entry: {name: name, url: url, image: image}});
-			}
-			
-			function checkStream()
-			{
-				if (!socket.connected){
-					stopStream();
-					socket.connect();
-				}
-			}
-			function asReady()
-			{
-				isFlashReady = true;
-			}
-			function getEntry()
-			{
-				getMovie().getEntry();
-
-			}
-			function writeQueue(queue){
-				//TODO: put this somewhere!
-			}
-			function writeAnnouncement(msg) {
-				$("#announceText").html('<em>' + msg + '</em>');
-				$("#announcement").fadeIn('slow');
-			}
-			
-			function writeStats(stats)
-			{
-				//$("#stats").html('Viewers: ' +  stats.viewers.toString() + '<br>Votes 1: ' + stats.vote1.toString() + '<br>Votes 2: ' + stats.vote2.toString());
-				$("#stats").html('Viewers: 4,451,78' +  stats.viewers.toString());
-			}
-			
-			function writeLeaders(leaders) {
-				$("#leaders").html("");
-				if (leaders[0].id != undefined) $("#leaderBoard").show();
-				for (i=0;i<=leaders.length-1;i++)
-				{
-					if(leaders[i].id != undefined)
-					{
-						var leaderData = leaders[i].id.split("|");
-						var id = leaderData[0];
-						var name = "Anonymous";
-						var image = "/images/unknown.jpg";
-						var url = "#";
-						if (leaderData[1]) name = leaderData[1];
-						if (leaderData[2]) image = leaderData[2];
-						if (leaderData[3]) url = leaderData[3];
-						
-						var li1 = document.createElement('li');
-						var min = Math.floor(leaders[i].ts / 60);
-						var sec = leaders[i].ts - (min * 60);
-						var ts = min + " min " + sec + " sec";
-						$(li1).html('<a alt="'+id+'" href="' + url + '"><img target="_blank" class="leaderImage" src="' + image + '"></a><div class="leaderName">' + name + '</div><div class="leaderTime">' + ts + '</div>');
-						$("#leaders").append(li1);
-					}
-					
-				}
-				
-			}
-			
-			function vote(streamNum){
-				socket.send({vote: streamNum});
-			}
-			
-			function flag(streamNum){
-				socket.send({flag: streamNum});
-			}
-			
-			function getMovie() {
-				if(isFlashReady)
-					if (navigator.appName.indexOf("Microsoft") != -1) {
-						return window['Webcam'];
-					} else {
-						return document['Webcam'];
-					}
-				else
-					setTimeout("getMovie()",100);				
-			}
 			
 	body	
-		#newbar
-			#newbar2 LIVE SHOWDOWN		
+		#topbar
+			#topbar2 
+				a(href="/") LIVE SHOWDOWN		
 				#stats		
 		#announcement(style="display:none")
 			span#announceText
@@ -219,10 +30,10 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 							a(href='#', onClick='addToQueue()') Add to Queue
 				#logo
 					span !{title}
-					//img(src='/images/logo.png')
 				!{body}
 		#footer_container
 			#footer
 				#leaderBoard(style="display:none")
 					h2 Hall of Fame
 					ul#leaders
+				#footerText(style="color:#ccc;text-align:center") !{footer}

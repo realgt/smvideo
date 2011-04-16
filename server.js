@@ -1,5 +1,5 @@
 var connect = require('connect'), express = require('express'), sys = require('sys'), io = require('socket.io'), RedisStore = require('connect-redis'), redis_client = require(
-    "redis").createClient(), port = (process.env.PORT || 8081);
+    "redis").createClient(), port = (process.env.PORT || 80);
 
 var stat = __dirname + '/static';
 var sessionStore = new RedisStore();
@@ -471,7 +471,7 @@ var bg = ["graffiti","boxing","nebula", "city"];
 server.get('/', function(req, res) {
   req.session.cookie.expires = false;
   var theme = bg[Math.floor(Math.random()*bg.length)]
-  res.render('index.jade', { locals : { header : 'Live Showdown', footer : '&copy;SharkMob', title : 'Live Showdown', sessionKey : req.sessionID, theme: theme } });
+  res.render('index.jade', { locals : { header : 'Live Showdown', footer : '&copy;Live Showdown', title : 'Live Showdown', sessionKey : req.sessionID, theme: theme } });
 });
 
 console.log('Listening on http://0.0.0.0:' + port);

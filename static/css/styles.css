@@ -12,7 +12,7 @@ body {
 
 h2 { font: 60px 'Cabin Sketch', arial, serif; color: #EFEFEF;text-shadow: 1px 2px 2px #000;}
 
-#newbar{
+#topbar{
 	position:relative;z-index:100;
 	background:#111 url(/images/barbg.jpg) repeat-x 0 0;
 	color:#ccc;
@@ -20,16 +20,16 @@ h2 { font: 60px 'Cabin Sketch', arial, serif; color: #EFEFEF;text-shadow: 1px 2p
 	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.5);
 	min-height:40px;
 }
-#newbar2{width:936px;
+#topbar2{width:936px;
 margin:0 auto;
-padding:10px 0;
+padding:5px 0;
 /* font:bold 13px/19px "Helvetica Neue",Arial,Sans-serif; */
 font: bold 24px/19px "Architects Daughter",Arial,Sans-serif;
 text-align:left;}
-#newbar strong{color:#fff;}
-#newbar a{color:#7df;}
-#newbar a.hashtag{color:#999;font-weight:normal;}
-#newbar a.hashtag:hover{color:#ccc;}
+#topbar strong{color:#fff;}
+#topbar a{text-decoration:none; color:#ccc;}
+#topbar a.hashtag{text-decoration:none;color:#999;font-weight:normal;}
+#topbar a.hashtag:hover{color:#ccc;}
 
 /************/
 /*   Logo   */
@@ -135,18 +135,18 @@ div#main_container {
 	background: -moz-radial-gradient(
 	  50% 50%, circle, white 0px, #efefef 800px
 	); */
-	height: 636px;
+	height: 656px;
 }
 
 /************/
-/*   Home   */
+/*   showcase_wrapper   */
 /************/
 
-div#home {
+div#showcase_wrapper {
 	float: left;
 	display: inline-block;
-	width: 1000px;
-	height: 555px;
+	width: 960px;
+	height: 575px;
 	margin-top: 105px;
 	position: absolute;
 	z-index: 0;
@@ -154,29 +154,22 @@ div#home {
 
 div#da_container{
 	text-align:center;
-	margin: auto auto;
-	padding-top:50px;
+	width: 960px;
+	height: 90px;
+	position: absolute;
+	z-index: 6;
+	margin-top: 455px;
+	float: left;
 }
 
-div#showcase_home {
-	/* background-image: url(../images/BG_home_showcase.png); */
+div#showcase {
+	/* background-image: url(../images/BG_showcase_wrapper_showcase.png); */
 	height: 480px;
 	float: left;
 	width: 980px;
 	overflow: hidden;
 	position: absolute;
 	z-index: 0;
-}
-
-
-div#home_nav_shadow {
-	width: 960px;
-	height: 6px;
-	position: absolute;
-	z-index: 5;
-	margin-top: 530px;
-	float: left;
-	background: url(../images/home_nav_shadow.png) no-repeat 0 0;
 }
 
 /**************/
