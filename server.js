@@ -171,7 +171,7 @@ function addToQueue(clientId) {
   var ts = Math.round(new Date().getTime() / 1000.0);
   redis_client.zadd(sortedSet, ts, clientId, function(err, response) {
     console.log(clientId + " added to queue with epoch: " + ts);
-    io.clients[clientId].send( { announcement : "You have been added to the queue!" })
+    io.clients[clientId].send( { announcement : "You're in line for a showdown!" })
     if (emptyStream1) {// handle empty queues (usually on startup)
         addNext(1);
         emptyStream1 = false;
@@ -437,6 +437,10 @@ function cleanUpQueue() {
       if (io.clients[reply] == undefined) {
         removeFromQueue(reply);
       }
+      else
+      {
+        io.clients[reply].send({announcement: "You're up in a few moments! Get ready for battle!"});
+      }
     });
   });
 }
@@ -473,7 +477,8 @@ var bg = ["graffiti","boxing","nebula", "city"];
  */
 server.get('/', function(req, res) {
   req.session.cookie.expires = false;
-  var theme = bg[Math.floor(Math.random()*bg.length)]
+  //var theme = bg[Math.floor(Math.random()*bg.length)]
+  var theme = "boxing";
   res.render('index.jade', { locals : { header : 'Live Showdown', footer : '&copy;Live Showdown', title : 'Live Showdown', sessionKey : req.sessionID, theme: theme } });
 });
 
