@@ -19,8 +19,8 @@ function sendEntryData(name,url,image){socket.send({entry:{name:name,url:url,ima
 function checkStream(){if(!socket.connected){stopStream();socket.connect();}}
 function asReady(){isFlashReady=true;}
 function getEntry(){getMovie().getEntry();}
-function writeAnnouncement(msg){$("#announceText").html('<em>'+msg+'</em>');$("#announcement").fadeIn('slow');}
-function writeStats(stats){getMovie().updateStats(stats);var viewers=stats.split("|")[0];$("#stats").html('Viewers: 4,451,78'+viewers);}
+function writeAnnouncement(msg){$("#announceText").html('<em>'+msg+'</em>');$("#announcement").fadeIn('slow');setTimeout("$('#announcement').fadeOut('slow')",5000);}
+function writeStats(stats){getMovie().updateStats(stats);var viewers=stats.split("|")[0];$("#stats").html('Viewers: '+viewers);}
 function writeLeaders(leaders){$("#leaders").html("");if(leaders[0].id!=undefined)
 $("#leaderBoard").show();for(i=0;i<=leaders.length-1;i++){if(leaders[i].id!=undefined){var leaderData=leaders[i].id.split("|");var id=leaderData[0];var name="Anonymous";var image="/images/unknown.jpg";var url="#";if(leaderData[1])
 name=leaderData[1];if(leaderData[2])

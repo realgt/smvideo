@@ -90,12 +90,13 @@ function getEntry() {
 function writeAnnouncement(msg) {
   $("#announceText").html('<em>' + msg + '</em>');
   $("#announcement").fadeIn('slow');
+  setTimeout("$('#announcement').fadeOut('slow')", 5000);
 }
 
 function writeStats(stats) {
   getMovie().updateStats(stats);
   var viewers = stats.split("|")[0];
-  $("#stats").html('Viewers: 4,451,78' + viewers);
+  $("#stats").html('Viewers: ' + viewers);
 }
 
 function writeLeaders(leaders) {

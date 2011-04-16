@@ -171,7 +171,7 @@ function addToQueue(clientId) {
   var ts = Math.round(new Date().getTime() / 1000.0);
   redis_client.zadd(sortedSet, ts, clientId, function(err, response) {
     console.log(clientId + " added to queue with epoch: " + ts);
-    io.clients[clientId].send( { announcement : "You're in line for a showdown!" })
+    io.clients[clientId].send( { announcement : "You're in line to battle!" })
     if (emptyStream1) {// handle empty queues (usually on startup)
         addNext(1);
         emptyStream1 = false;
