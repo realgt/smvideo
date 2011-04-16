@@ -1,24 +1,17 @@
 var isFlashReady = false;
 window.onload = function() {
+  socket.connect();
   setInterval("checkStream()", 30000);
-}
 
+}
 var socket = new io.Socket(null, { port : 80, rememberTransport : false });
 
-socket.connect();
 socket.on('message', function(data) {
   if (data.leaders) {
     writeLeaders(data.leaders);
   }
-  else if (data.stats) {
-    writeStats(data.stats);
-    var viewers = data.stats.viewers.toString();
-    var vote1 = data.stats.vote1.toString();
-    var vote2 = data.stats.vote2.toString();
-    var flag1 = data.stats.flag1.toString();
-    var flag2 = data.stats.flag2.toString();
-    var statsString = viewers + "|" + vote1 + "|" + vote2 + "|" + flag1 + "|" + flag2;
-    getMovie().setGameStats(statsString);
+  else if (data.gamestats) {
+    writeStats(data.gamestats);
   }
   else if (data.queue) {
     writeQueue(data.queue);
@@ -92,15 +85,17 @@ function asReady() {
 }
 function getEntry() {
   getMovie().getEntry();
-
 }
+
 function writeAnnouncement(msg) {
   $("#announceText").html('<em>' + msg + '</em>');
   $("#announcement").fadeIn('slow');
 }
 
 function writeStats(stats) {
-  $("#stats").html('Viewers: 4,451,78' + stats.viewers.toString());
+  getMovie().updateStats(stats);
+  var viewers = stats.split("|")[0];
+  $("#stats").html('Viewers: 4,451,78' + viewers);
 }
 
 function writeLeaders(leaders) {
@@ -144,13 +139,22 @@ function flag(streamNum) {
 }
 
 function getMovie() {
-  if (isFlashReady)
-    if (navigator.appName.indexOf("Microsoft") != -1) {
-      return window['Webcam'];
+  var movieName = 'Webcam';
+  if (isFlashReady){
+    try
+    {
+        movie = document[movieName];
+        //movie = document.getElementById(movieName);
+        movie = (movie == null || movie == undefined) ? window[movieName] : movie;        
     }
-    else {
-      return document['Webcam'];
+    catch (e)
+    {
+        return null;
     }
+    return movie;
+  }
   else
-    setTimeout("getMovie()", 100);
+  {
+    //setTimeout("getMovie()", 1000);
+  }
 }

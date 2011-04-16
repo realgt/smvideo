@@ -23,17 +23,12 @@ h2 { font: 60px 'Cabin Sketch', arial, serif; color: #EFEFEF;text-shadow: 1px 2p
 #topbar2{width:936px;
 margin:0 auto;
 padding:5px 0;
-/* font:bold 13px/19px "Helvetica Neue",Arial,Sans-serif; */
 font: bold 24px/19px "Architects Daughter",Arial,Sans-serif;
 text-align:left;}
 #topbar strong{color:#fff;}
-#topbar a{text-decoration:none; color:#ccc;}
+#topbar a{text-decoration:none; color:#ccc;position:absolute; top:10px}
 #topbar a.hashtag{text-decoration:none;color:#999;font-weight:normal;}
 #topbar a.hashtag:hover{color:#ccc;}
-
-/************/
-/*   Logo   */
-/************/
 
 div#logo {
 	width: 960px;
@@ -79,18 +74,10 @@ div#logo {
   	background: #f5c449;
 }
 
-/*****************/
-/*  Content Wrapper */
-/******************/
-
 #content {
 	width: 960px;
 	margin: auto;
 }
-/******************/
-/*   Navigation   */
-/******************/
-
 #header_container {
 	padding-left: 430px;
 	width: 530px;
@@ -120,27 +107,9 @@ div#logo {
 }
 
 
-/*****************/
-/*   main_container   */
-/*****************/
-
 div#main_container {
-	/*background: #48443b url(../images/Background.jpg) repeat-x center top;*/
-	/*background: #545454 url(../images/Background.png) no-repeat scroll center center;*/
-	/* background: #000 url(../themes/graffiti/background.jpg) no-repeat scroll center center; */
-	/* background: -webkit-gradient(
-	  radial, 50% 50%, 0, 50% 50%, 800, from(white), to(#efefef)
-	) #f90;
-	
-	background: -moz-radial-gradient(
-	  50% 50%, circle, white 0px, #efefef 800px
-	); */
 	height: 656px;
 }
-
-/************/
-/*   showcase_wrapper   */
-/************/
 
 div#showcase_wrapper {
 	float: left;
@@ -163,7 +132,6 @@ div#da_container{
 }
 
 div#showcase {
-	/* background-image: url(../images/BG_showcase_wrapper_showcase.png); */
 	height: 480px;
 	float: left;
 	width: 980px;
@@ -171,10 +139,6 @@ div#showcase {
 	position: absolute;
 	z-index: 0;
 }
-
-/**************/
-/*   Footer   */
-/**************/
 #footer_container
 {
 	border-top: 1px solid #333;
@@ -207,4 +171,3 @@ ul#leaders li div {
 	heigth:90px;
 	border:0;
 }
-

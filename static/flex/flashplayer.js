@@ -38,7 +38,7 @@ if (navigator.appName.indexOf("Microsoft") != -1) {
       "quality", "high",
       "wmode", "transparent",
       "name", "Webcam",
-      "allowScriptAccess","sameDomain",
+      "allowScriptAccess","always",
       "type", "application/x-shockwave-flash",
       "pluginspage", "http://www.adobe.com/go/getflashplayer"
     );
@@ -54,7 +54,7 @@ if (navigator.appName.indexOf("Microsoft") != -1) {
         "quality", "high",
         "wmode", "transparent",
         "name", "Webcam",
-        "allowScriptAccess","sameDomain",
+        "allowScriptAccess","always",
         "type", "application/x-shockwave-flash",
         "pluginspage", "http://www.adobe.com/go/getflashplayer"
     );

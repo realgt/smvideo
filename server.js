@@ -98,15 +98,18 @@ io.on('connection', function(client) {
  *          the socket.io client object
  */
 function sendStats(counter) {
-  io.broadcast( { stats : { viewers : counter, vote1 : vote1, vote2 : vote2, flag1 : flag1, flag2 : flag2 } });
+  io.broadcast( { gamestats : getStats(counter) });
 }
 
 function sendStatsGetCounter() {
   redis_client.hget(appDb, counter, function(err, counter) {
-    io.broadcast( { stats : { viewers : counter, vote1 : vote1, vote2 : vote2, flag1 : flag1, flag2 : flag2 } });
+    
+    io.broadcast( { gamestats : getStats(counter) });
   });
 }
-
+function getStats(counter){
+  return ""+ counter + "|" + vote1 + "|" + vote2 + "|" + flag1 + "|" + flag2+"";
+}
 /*******************************************************************************
  * Sends the leaderboard to a client
  * 
