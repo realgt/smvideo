@@ -13,18 +13,21 @@ body {
 h2 { font: 60px 'Cabin Sketch', arial, serif; color: #EFEFEF;text-shadow: 1px 2px 2px #000;}
 
 #topbar{
-	position:relative;z-index:100;
+	position:relative;
+	z-index:100;
 	background:#111 url(/images/barbg.jpg) repeat-x 0 0;
 	color:#ccc;
 	box-shadow:0 1px 2px rgba(0,0,0,0.5);
 	-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.5);
 	min-height:40px;
 }
-#topbar2{width:936px;
-margin:0 auto;
-padding:5px 0;
-font: bold 24px/19px "Architects Daughter",Arial,Sans-serif;
-text-align:left;}
+#topbar2{
+	width:936px;
+	margin:0 auto;
+	padding:5px 0;
+	font: bold 24px/19px "Architects Daughter",Arial,Sans-serif;
+	text-align:left;
+}
 #topbar strong{color:#fff;}
 #topbar a{text-decoration:none; color:#ccc;position:absolute; top:10px}
 #topbar a.hashtag{text-decoration:none;color:#999;font-weight:normal;}
@@ -42,6 +45,35 @@ div#logo {
 	color: #efefef;
 	text-align:center;
 }
+#warning {
+	position: absolute;     
+  	top: 5px;
+	width: 320px;   
+  	left: 0;                  
+  	right: 0;
+  	margin-left: auto;        
+  	margin-right: auto;
+	text-shadow: 1px 2px 2px #DDD;
+	border-top: 1px solid #000000;
+  	background: #F59227;
+  	background: -webkit-gradient(linear, left top, left bottom, from(#E00E0B), to(#970A07));
+  	background: -moz-linear-gradient(top, #E00E0B, #970A07);
+  	padding: 5px 20px;
+  	-webkit-border-radius: 3px;
+  	-moz-border-radius: 3px;
+  	border-radius: 3px;
+  	-webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+  	-moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   	box-shadow: rgba(0,0,0,1) 0 1px 0;
+  	text-shadow: rgba(0,0,0,.4) 0 1px 0;
+  	color: #0d0d0d;
+   	font-size: 22px;
+   	font-family: "Architects Daughter", Serif;
+  	text-decoration: none;
+   	vertical-align: middle;
+	text-align:center;
+}
+
 #stats {
 	float:right;
 	text-shadow: 1px 2px 2px #DDD;

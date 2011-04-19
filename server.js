@@ -1,5 +1,5 @@
 var connect = require('connect'), express = require('express'), sys = require('sys'), io = require('socket.io'), RedisStore = require('connect-redis'), redis_client = require(
-    "redis").createClient(), port = (process.env.PORT || 80);
+    "redis").createClient(), port = (process.env.PORT || 8081);
 
 var stat = __dirname + '/static';
 var sessionStore = new RedisStore();
@@ -40,9 +40,9 @@ loserClient = '';
  * start clean up the db on a new start FIXME: use config params to wrap this
  * instead (development vs production)
  */
-console.log("Cleaning up the db!");
-redis_client.del(sortedSet);// removes the queue!!
-redis_client.hset(appDb, counter, 0);
+//console.log("Cleaning up the db!");
+//redis_client.del(sortedSet);// removes the queue!!
+//redis_client.hset(appDb, counter, 0);
 // end clean DB
 
 // Setup Socket.IO
@@ -63,7 +63,6 @@ io.on('connection', function(client) {
     redis_client.HINCRBY(appDb, counter, -1, function(err, counter) {
       sendStats(counter);
     });
-    cleanUpQueue();
   });
 
   /** * CLIENT MESSAGE *** */
@@ -329,6 +328,7 @@ function removeLoser(streamId) {
   vote2 = 0;
   flag1 = 0;
   flag2 = 0;
+  cleanUpQueue();
   // logAnalytics("removing loser from: " + streamId);
 }
 
@@ -403,7 +403,7 @@ function confirmedStreaming(clientId, streamId) {
     redis_client.hset(appDb, "stream1Client", clientId + "|" + now);
   else if (streamId == "stream2")
     redis_client.hset(appDb, "stream2Client", clientId + "|" + now);
-
+  io.broadcast({message: "newbattle"});
   console.log(clientId + " should be publishing to: " + streamId);
 }
 /*******************************************************************************
@@ -439,7 +439,7 @@ function cleanUpQueue() {
       }
       else
       {
-        io.clients[reply].send({announcement: "You're up in a few moments! Get ready for battle!"});
+        io.clients[reply].send({warning: "YOU'RE ABOUT TO GO LIVE!"});
       }
     });
   });

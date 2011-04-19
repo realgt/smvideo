@@ -1,16 +1,18 @@
 var isFlashReady=false;window.onload=function(){socket.connect();setInterval("checkStream()",30000);}
-var socket=new io.Socket(null,{port:80,rememberTransport:false});socket.on('message',function(data){if(data.leaders){writeLeaders(data.leaders);}
+var socket=new io.Socket(null,{port:8081,rememberTransport:false});socket.on('message',function(data){if(data.leaders){writeLeaders(data.leaders);}
 else if(data.gamestats){writeStats(data.gamestats);}
 else if(data.queue){writeQueue(data.queue);}
 else if(data.announcement){writeAnnouncement(data.announcement);}
+else if(data.warning){writeWarning(data.warning);}
 else if(data.winner){getMovie().setWinner(data.winner);}
 else if(data.message){if(data.message=='stopStream'){stopStream();addToQueue();}
+else if(data.message=="newbattle"){getMovie().startBattle();}
 else if(data.message.substr(0,6)=='stream'){startStream(data.message);}
 else if(data.message=='leaderboard'){writeAnnouncement('Congrats, you are on the leaderboard');getEntry();}}});socket.on('disconnect',function(){console.log('reconnecting...')
 socket.connect()});socket.on('connect_failed',function(){console.log('connection failed. reconnecting...')
 socket.connect()});function startedStreaming(streamId){socket.send({streaming:streamId});}
 function stopStream(){getMovie().stopStream();}
-function startStream(message){getMovie().startStream(message);}
+function startStream(message){$("#warning").fadeOut("slow");getMovie().startStream(message);}
 function addToQueue(){if(!socket.connected){setTimeout("addToQueue()",1000);}
 else
 {socket.send({queue:true});}}
@@ -20,6 +22,7 @@ function checkStream(){if(!socket.connected){stopStream();socket.connect();}}
 function asReady(){isFlashReady=true;}
 function getEntry(){getMovie().getEntry();}
 function writeAnnouncement(msg){$("#announceText").html('<em>'+msg+'</em>');$("#announcement").fadeIn('slow');setTimeout("$('#announcement').fadeOut('slow')",5000);}
+function writeWarning(msg){$("#warning").html(msg);$("#warning").fadeIn("slow");}
 function writeStats(stats){getMovie().updateStats(stats);var viewers=stats.split("|")[0];$("#stats").html('Viewers: '+viewers);}
 function writeLeaders(leaders){$("#leaders").html("");if(leaders[0].id!=undefined)
 $("#leaderBoard").show();for(i=0;i<=leaders.length-1;i++){if(leaders[i].id!=undefined){var leaderData=leaders[i].id.split("|");var id=leaderData[0];var name="Anonymous";var image="/images/unknown.jpg";var url="#";if(leaderData[1])

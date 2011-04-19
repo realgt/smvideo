@@ -4,7 +4,7 @@ window.onload = function() {
   setInterval("checkStream()", 30000);
 
 }
-var socket = new io.Socket(null, { port : 80, rememberTransport : false });
+var socket = new io.Socket(null, { port : 8081, rememberTransport : false });
 
 socket.on('message', function(data) {
   if (data.leaders) {
@@ -19,6 +19,9 @@ socket.on('message', function(data) {
   else if (data.announcement) {
     writeAnnouncement(data.announcement);
   }
+  else if (data.warning){
+    writeWarning(data.warning);
+  }
   else if (data.winner) {
     getMovie().setWinner(data.winner);
   }
@@ -26,6 +29,9 @@ socket.on('message', function(data) {
     if (data.message == 'stopStream') {
       stopStream();
       addToQueue();
+    }
+    else if (data.message == "newbattle"){
+      getMovie().startBattle();
     }
     else if (data.message.substr(0, 6) == 'stream') {
       startStream(data.message);
@@ -54,6 +60,7 @@ function stopStream() {
   getMovie().stopStream();
 }
 function startStream(message) {
+  $("#warning").fadeOut("slow");
   getMovie().startStream(message);
 }
 function addToQueue() {
@@ -91,6 +98,11 @@ function writeAnnouncement(msg) {
   $("#announceText").html('<em>' + msg + '</em>');
   $("#announcement").fadeIn('slow');
   setTimeout("$('#announcement').fadeOut('slow')", 5000);
+}
+
+function writeWarning(msg){
+  $("#warning").html(msg);
+  $("#warning").fadeIn("slow");
 }
 
 function writeStats(stats) {
