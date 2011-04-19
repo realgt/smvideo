@@ -4,7 +4,7 @@ window.onload = function() {
   setInterval("checkStream()", 30000);
 
 }
-var socket = new io.Socket(null, { port : 8081, rememberTransport : false });
+var socket = new io.Socket(null, { port : 80, rememberTransport : false });
 
 socket.on('message', function(data) {
   if (data.leaders) {

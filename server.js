@@ -1,5 +1,5 @@
 var connect = require('connect'), express = require('express'), sys = require('sys'), io = require('socket.io'), RedisStore = require('connect-redis'), redis_client = require(
-    "redis").createClient(), port = (8081);
+    "redis").createClient(), port = (process.env.PORT || 80);
 
 var stat = __dirname + '/static';
 var sessionStore = new RedisStore();

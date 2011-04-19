@@ -1,5 +1,5 @@
 var isFlashReady=false;window.onload=function(){socket.connect();setInterval("checkStream()",30000);}
-var socket=new io.Socket(null,{port:8081,rememberTransport:false});socket.on('message',function(data){if(data.leaders){writeLeaders(data.leaders);}
+var socket=new io.Socket(null,{port:80,rememberTransport:false});socket.on('message',function(data){if(data.leaders){writeLeaders(data.leaders);}
 else if(data.gamestats){writeStats(data.gamestats);}
 else if(data.queue){writeQueue(data.queue);}
 else if(data.announcement){writeAnnouncement(data.announcement);}
