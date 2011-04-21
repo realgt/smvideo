@@ -40,9 +40,9 @@ loserClient = '';
  * start clean up the db on a new start FIXME: use config params to wrap this
  * instead (development vs production)
  */
-//console.log("Cleaning up the db!");
-//redis_client.del(sortedSet);// removes the queue!!
-//redis_client.hset(appDb, counter, 0);
+console.log("Cleaning up the db!");
+redis_client.del(sortedSet);// removes the queue!!
+redis_client.hset(appDb, counter, 0);
 // end clean DB
 
 // Setup Socket.IO
