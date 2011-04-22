@@ -4,6 +4,7 @@
 	padding: 0;
 	list-style-type: none;
 	outline: 0;
+
 }
 
 body {
@@ -11,7 +12,17 @@ body {
 }
 
 h2 { font: 60px 'Architects Daughter', arial, serif; color: #EFEFEF;text-shadow: 1px 2px 2px #000;}
-
+hr { 
+	margin-top: 50px;
+	height: 1px; 
+	color #666666; 
+	background-color: #666666;
+}
+p {
+	font: 40px 'Architects Daughter', serif;
+	color: #EFEFEF;
+	text-shadow: 1px 2px 2px #666666;
+}
 #topbar{
 	position:relative;
 	z-index:100;
@@ -25,14 +36,14 @@ h2 { font: 60px 'Architects Daughter', arial, serif; color: #EFEFEF;text-shadow:
 	width:936px;
 	margin:0 auto;
 	padding:5px 0;
-	font: bold 24px/19px "Architects Daughter",Arial,Sans-serif;
+	font: 24px/19px "Architects Daughter",Arial,Sans-serif;
 	text-align:left;
 }
 #topbar strong{color:#fff;}
-#topbar a{text-decoration:none; color:#ccc;position:absolute; top:10px}
-#topbar a.hashtag{text-decoration:none;color:#999;font-weight:normal;}
-#topbar a.hashtag:hover{color:#ccc;}
-
+#topbar a{text-decoration:none; color:#ccc;padding-right:60px;}
+#topbar a.mainLink{
+	padding-top:10px; 
+	font-weight: bold;}
 div#logo {
 	width: 960px;
 	z-index: 9;
@@ -164,10 +175,7 @@ div#showcase {
 	position: absolute;
 	z-index: 0;
 }
-#footer_container
-{
-	border-top: 1px solid #333;
-}
+
 div#footer {
 	width: 960px;
 	height: 155px;
@@ -175,7 +183,7 @@ div#footer {
 }
 ul#leaders li { 
 	font: 40px 'Architects Daughter', serif;color: #EFEFEF;
-	text-shadow: 1px 2px 2px #000; 
+	text-shadow: 1px 2px 2px #666666; 
 }
 
 ul#leaders li div {

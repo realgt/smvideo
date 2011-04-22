@@ -82,6 +82,10 @@ io.on('connection', function(client) {
     else if (message.streaming) {
       confirmedStreaming(client.sessionId, message.streaming);
     }
+    else if (message.abortStream) {
+      removeFromQueue(client.sessionId);
+      abortStreaming(client.sessionId, message.abortStream);
+    }
 
     if (message.vote || message.flag) {
       determineLoser();
@@ -408,6 +412,15 @@ function confirmedStreaming(clientId, streamId) {
   io.broadcast({message: "newbattle"});
   console.log(clientId + " should be publishing to: " + streamId);
 }
+
+function abortStreaming(clientId, streamId) {
+  redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
+    if(clientId == results[0])
+      removeLoser(1);
+    else if (clientId == results[1])
+      removeLoser(2);
+  });
+}
 /*******************************************************************************
  * Removes a client from the Queue (the database's sortedSet)
  * 
@@ -420,12 +433,12 @@ function removeFromQueue(clientId) {
       console.log(clientId + " removed from queue");
     });
     //now check if they were broadcasting!
-//    redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
-//      if(clientId == results[0])
-//        removeLoser(1);
-//      else if (clientId == results[1])
-//        removeLoser(2);
-//    });
+    redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
+      if(clientId == results[0])
+        removeLoser(1);
+      else if (clientId == results[1])
+        removeLoser(2);
+    });
   }
 }
 
