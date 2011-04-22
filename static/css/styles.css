@@ -10,7 +10,7 @@ body {
 	background-color: #000;
 }
 
-h2 { font: 60px 'Cabin Sketch', arial, serif; color: #EFEFEF;text-shadow: 1px 2px 2px #000;}
+h2 { font: 60px 'Architects Daughter', arial, serif; color: #EFEFEF;text-shadow: 1px 2px 2px #000;}
 
 #topbar{
 	position:relative;
@@ -46,13 +46,6 @@ div#logo {
 	text-align:center;
 }
 #warning {
-	position: absolute;     
-  	top: 5px;
-	width: 320px;   
-  	left: 0;                  
-  	right: 0;
-  	margin-left: auto;        
-  	margin-right: auto;
 	text-shadow: 1px 2px 2px #DDD;
 	border-top: 1px solid #000000;
   	background: #F59227;
@@ -129,14 +122,13 @@ div#logo {
     padding: 3px 0 2px 0;
     font-weight: bold;
 }
-#announcement a{
-	text-decoration: none;
-	font-family: Courier, monospace;	
-}
-#closeX {
+
+.closeX {
 	float: right;
 	margin-right: 50px;
 	width: 17px;
+	text-decoration: none;
+	font-family: Courier, monospace;	
 }
 
 

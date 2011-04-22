@@ -4,6 +4,7 @@ window.onload = function() {
   setInterval("checkStream()", 30000);
 
 }
+var movie;
 var socket = new io.Socket(null, { port : 80, rememberTransport : false });
 
 socket.on('message', function(data) {
@@ -19,7 +20,7 @@ socket.on('message', function(data) {
   else if (data.announcement) {
     writeAnnouncement(data.announcement);
   }
-  else if (data.warning){
+  else if (data.warning) {
     writeWarning(data.warning);
   }
   else if (data.winner) {
@@ -30,7 +31,7 @@ socket.on('message', function(data) {
       stopStream();
       addToQueue();
     }
-    else if (data.message == "newbattle"){
+    else if (data.message == "newbattle") {
       getMovie().startBattle();
     }
     else if (data.message.substr(0, 6) == 'stream') {
@@ -53,7 +54,7 @@ socket.on('connect_failed', function() {
 });
 
 function startedStreaming(streamId) {
-  socket.send( { streaming : streamId });
+  socket.send({ streaming : streamId });
 }
 
 function stopStream() {
@@ -67,18 +68,17 @@ function addToQueue() {
   if (!socket.connected) {
     setTimeout("addToQueue()", 1000);
   }
-  else
-  {
-    socket.send( { queue : true });
-  }  
-  
+  else {
+    socket.send({ queue : true });
+  }
+
 }
 function removeFromQueue() {
-  socket.send( { queue : false });
+  socket.send({ queue : false });
 }
 
 function sendEntryData(name, url, image) {
-  socket.send( { entry : { name : name, url : url, image : image } });
+  socket.send({ entry : { name : name, url : url, image : image } });
 }
 
 function checkStream() {
@@ -100,13 +100,13 @@ function writeAnnouncement(msg) {
   setTimeout("$('#announcement').fadeOut('slow')", 5000);
 }
 
-function writeWarning(msg){
-  $("#warning").html(msg);
+function writeWarning(msg) {
+  $("#warnText").html(msg);
   $("#warning").fadeIn("slow");
 }
 
 function writeStats(stats) {
-  getMovie().updateStats(stats);
+  if (getMovie()) getMovie().updateStats(stats);
   var viewers = stats.split("|")[0];
   $("#stats").html('Viewers: ' + viewers);
 }
@@ -134,8 +134,8 @@ function writeLeaders(leaders) {
       var sec = leaders[i].ts - (min * 60);
       var ts = min + " min " + sec + " sec";
       $(li1).html(
-          '<a alt="' + id + '" href="' + url + '"><img target="_blank" width="128" height="90"  class="leaderImage" src="' + image + '"></a><div class="leaderName">' + name
-              + '</div><div class="leaderTime">' + ts + '</div>');
+          '<a alt="' + id + '" href="' + url + '"><img target="_blank" width="128" height="90"  class="leaderImage" src="' + image
+              + '"></a><div class="leaderName">' + name + '</div><div class="leaderTime">' + ts + '</div>');
       $("#leaders").append(li1);
     }
 
@@ -144,30 +144,31 @@ function writeLeaders(leaders) {
 }
 
 function vote(streamNum) {
-  socket.send( { vote : streamNum });
+  socket.send({ vote : streamNum });
 }
 
 function flag(streamNum) {
-  socket.send( { flag : streamNum });
+  socket.send({ flag : streamNum });
 }
 
 function getMovie() {
-  var movieName = 'Webcam';
-  if (isFlashReady){
-    try
-    {
+  if (!movie) {
+    var movieName = 'Webcam';
+    if (isFlashReady) {
+      try {
         movie = document[movieName];
-        //movie = document.getElementById(movieName);
-        movie = (movie == null || movie == undefined) ? window[movieName] : movie;        
-    }
-    catch (e)
-    {
+        // movie = document.getElementById(movieName);
+        movie = (movie == null || movie == undefined) ? window[movieName] : movie;
+      }
+      catch (e) {
         return null;
+      }
+      return movie;
     }
-    return movie;
+    else {
+      // setTimeout("getMovie()", 1000);
+    }
   }
-  else
-  {
-    //setTimeout("getMovie()", 1000);
-  }
+  return movie;
+
 }
