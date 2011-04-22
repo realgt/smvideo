@@ -48,7 +48,7 @@ redis_client.hset(appDb, counter, 0);
 // Setup Socket.IO
 var io = io.listen(server);
 io.on('connection', function(client) {
-
+  
   sendLeaders(client, false);
 
   /** * CLIENT CONNECT *** */
@@ -88,6 +88,8 @@ io.on('connection', function(client) {
     }
     sendStatsGetCounter();
   });
+  
+  manageQueue();
 });
 
 /*******************************************************************************
@@ -328,7 +330,7 @@ function removeLoser(streamId) {
   vote2 = 0;
   flag1 = 0;
   flag2 = 0;
-  cleanUpQueue();
+  manageQueue();
   // logAnalytics("removing loser from: " + streamId);
 }
 
@@ -431,7 +433,7 @@ function removeFromQueue(clientId) {
  * Cleans up the Queue by looping over the next ten people and kicking them off
  * the queue if they're not connected anymore
  */
-function cleanUpQueue() {
+function manageQueue() {
   redis_client.zrange(sortedSet, 0, 10, function(err, replies) {
     replies.forEach(function(reply) {
       if (io.clients[reply] == undefined) {

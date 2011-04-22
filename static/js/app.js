@@ -21,6 +21,7 @@ socket.on('message', function(data) {
   }
   else if (data.warning){
     writeWarning(data.warning);
+    getMovie().warmupCamera();
   }
   else if (data.winner) {
     getMovie().setWinner(data.winner);
