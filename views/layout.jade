@@ -9,8 +9,7 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 		script(src='/js/socket.io.min.js')
 		script(src='/js/analytics.js')
 		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js')
-		//script(src="/js/jquery.smooth-scroll.min.js", type="text/javascript")
-		script(src='/js/app.js')
+		script(src='/js/min/app.js')
 		script(src='/flex/AC_OETags.js')
 			
 			
@@ -18,7 +17,7 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 		#topbar
 			#topbar2 
 				a(class="mainLink", href="/") LIVE SHOWDOWN
-				a(href="#howItWorks") How it Works
+				a(href="#howItWorks") How It Works
 				a(href="#leaderBoard") Hall of Fame				
 				#stats		
 		#warning(style="display:none")
@@ -46,4 +45,6 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 					ul#leaders
 				
 				
-				#footerText(style="color:#ccc;text-align:center") !{footer}
+				#footerText(style="color:#ccc;text-align:center") 
+					a(href="http://twitter.com/liveshowdown", target="_blank") Contact Us
+					!{footer}

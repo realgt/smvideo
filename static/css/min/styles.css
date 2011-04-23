@@ -1,1 +1,29 @@
-*{list-style-type:none;outline:0;border-width:0;margin:0;padding:0}body{background-color:#000}h2{font:60px 'Cabin Sketch', arial, serif;color:#EFEFEF;text-shadow:1px 2px 2px #000}#topbar{position:relative;z-index:100;background:#111 url(/images/barbg.jpg) repeat-x 0 0;color:#ccc;box-shadow:0 1px 2px rgba(0,0,0,0.5);-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.5);min-height:40px}#topbar2{width:936px;font:bold 24px/19px "Architects Daughter",Arial,Sans-serif;text-align:left;margin:0 auto;padding:5px 0}#topbar strong{color:#fff}#topbar a{text-decoration:none;color:#ccc}#topbar a.hashtag{text-decoration:none;color:#999;font-weight:400}#topbar a.hashtag:hover{color:#ccc}div#logo{width:960px;z-index:9;margin-top:10px;padding-top:6px;background-repeat:no-repeat;position:absolute;font:80px 'Architects Daughter', serif;text-shadow:1px 2px 2px #DDD;color:#efefef}#stats{float:right;border-top:1px solid #000;background:0;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;-webkit-box-shadow:rgba(0,0,0,1) 0 1px 0;-moz-box-shadow:rgba(0,0,0,1) 0 1px 0;box-shadow:rgba(0,0,0,1) 0 1px 0;text-shadow:rgba(0,0,0,.4) 0 1px 0;color:#0d0d0d;font-size:22px;font-family:Georgia, Serif;text-decoration:none;vertical-align:middle;padding:5px 20px}#stats:hover{border-top-color:#f5e53b;background:#f5e53b;color:#969396}#stats:active{border-top-color:#f5c449;background:#f5c449}#content{width:960px;margin:auto}#header_container{padding-left:430px;width:530px;height:50px;position:absolute;z-index:10}#announcement{background-color:#85B4FF;color:#efefef;text-align:center;height:30px;font-size:1.4em;font-weight:700;margin:0;padding:3px 0 2px}#announcement a{text-decoration:none;font-family:Courier, monospace}#closeX{float:right;margin-right:50px;width:17px}div#main_container{height:656px}div#showcase_wrapper{float:left;display:inline-block;width:960px;height:575px;margin-top:105px;position:absolute;z-index:0}div#da_container{text-align:center;width:960px;height:90px;position:absolute;z-index:6;margin-top:455px;float:left}div#showcase{height:480px;float:left;width:980px;overflow:hidden;position:absolute;z-index:0}#footer_container{border-top:1px solid #333}div#footer{width:960px;height:155px;margin:auto}ul#leaders li{font:40px 'Architects Daughter', serif;color:#EFEFEF;text-shadow:1px 2px 2px #000}ul#leaders li div{display:inline}.leaderName{padding:0 20px 20px}.leaderTime{float:right;text-align:right;vertical-align:bottom;padding-top:50px}.leaderImage{width:120px;heigth:90px;border:0}
+*{list-style-type:none;outline:0;border-width:0;margin:0;padding:0}
+body{background-color:#000}
+h2{font:60px 'Architects Daughter', arial, serif;color:#EFEFEF;text-shadow:1px 2px 2px #000}
+hr{margin-top:50px;height:1px;background-color:#666666}
+#topbar{position:relative;z-index:100;background:#111 url(/images/barbg.jpg) repeat-x 0 0;color:#ccc;box-shadow:0 1px 2px rgba(0,0,0,0.5);-webkit-box-shadow:0 1px 2px rgba(0,0,0,0.5);min-height:40px}
+#topbar2{width:936px;font:24px/19px "Architects Daughter",Arial,Sans-serif;text-align:left;margin:0 auto;padding:5px 0}
+#topbar strong{color:#fff}
+#topbar a{text-decoration:none;color:#ccc;padding-right:60px}
+#topbar a.mainLink{padding-top:10px;font-weight:bold}
+div#logo{width:960px;z-index:9;margin-top:10px;padding-top:6px;background-repeat:no-repeat;position:absolute;font:80px 'Architects Daughter', serif;text-shadow:1px 2px 2px #000;color:#efefef;text-align:center}
+#warning{border-top:1px solid #000000;background:0;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;-webkit-box-shadow:rgba(0,0,0,1) 0 1px 0;-moz-box-shadow:rgba(0,0,0,1) 0 1px 0;box-shadow:rgba(0,0,0,1) 0 1px 0;text-shadow:rgba(0,0,0,.4) 0 1px 0;color:#0d0d0d;font-size:22px;font-family:"Architects Daughter", Serif;text-decoration:none;vertical-align:middle;text-align:center;padding:5px 20px}
+#stats{float:right;border-top:1px solid #000000;background:0;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;-webkit-box-shadow:rgba(0,0,0,1) 0 1px 0;-moz-box-shadow:rgba(0,0,0,1) 0 1px 0;box-shadow:rgba(0,0,0,1) 0 1px 0;text-shadow:rgba(0,0,0,.4) 0 1px 0;color:#0d0d0d;font-size:22px;font-family:"Architects Daughter", Serif;text-decoration:none;vertical-align:middle;padding:5px 20px}
+#stats:hover{border-top-color:#f5e53b;background:#f5e53b;color:#969396}
+#stats:active{border-top-color:#f5c449;background:#f5c449}
+#content{width:960px;margin:auto}
+#header_container{padding-left:430px;width:530px;height:50px;position:absolute;z-index:10}
+#announcement{background-color:#85B4FF;color:#efefef;text-align:center;height:30px;font-size:1.4em;font-weight:bold;margin:0;padding:3px 0 2px}
+.closeX{float:right;margin-right:50px;width:17px;text-decoration:none;font-family:Courier, monospace}
+div#main_container{height:656px}
+div#showcase_wrapper{float:left;display:inline-block;width:960px;height:575px;margin-top:105px;position:absolute;z-index:0}
+div#da_container{text-align:center;width:960px;height:90px;position:absolute;z-index:6;margin-top:455px;float:left}
+div#showcase{height:480px;float:left;width:980px;overflow:hidden;position:absolute;z-index:0}
+div#footer{width:960px;height:155px;margin:auto}
+ul#leaders li div{display:inline}
+.leaderName{padding:0 20px 20px}
+.leaderTime{float:right;text-align:right;vertical-align:bottom;padding-top:50px}
+.leaderImage{width:120px;heigth:90px;border:0}
+#footerText a{color:#efefef}
+p,ul#leaders li{font:40px 'Architects Daughter', serif;color:#EFEFEF;text-shadow:1px 2px 2px #666666}

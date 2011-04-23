@@ -134,7 +134,7 @@ function writeLeaders(leaders) {
       var sec = leaders[i].ts - (min * 60);
       var ts = min + " min " + sec + " sec";
       $(li1).html(
-          '<a alt="' + id + '" href="' + url + '"><img target="_blank" width="128" height="90"  class="leaderImage" src="' + image
+          '<a target="_blank" alt="' + id + '" href="' + url + '"><img width="128" height="90"  class="leaderImage" src="' + image
               + '"></a><div class="leaderName">' + name + '</div><div class="leaderTime">' + ts + '</div>');
       $("#leaders").append(li1);
     }
