@@ -8,13 +8,13 @@ var server = express.createServer();
 server.configure(function() {
   server.set('views', __dirname + '/views');
   server.set('view engine', 'jade');
-  server.use(express.compiler( { src : stat, enable : [ 'sass' ] }));
+  server.use(express.compiler({ src : stat, enable : [ 'sass' ] }));
   server.use(express.bodyParser());
   server.use(express.cookieParser());
-  server.use(express.session( { key : 'sessionKey', secret : 'api secret', store : sessionStore }));
+  server.use(express.session({ key : 'sessionKey', secret : 'api secret', store : sessionStore }));
   server.use(express.static(stat));
   server.use(server.router);
-  server.use('/', express.errorHandler( { dump : true, stack : true }));
+  server.use('/', express.errorHandler({ dump : true, stack : true }));
 });
 
 /*******************************************************************************
@@ -32,8 +32,6 @@ tmpSet = "zTemp";
 counter = "counter";
 appDb = "hApp";
 leaders = [];
-emptyStream1 = true;
-emptyStream2 = true;
 loserClient = '';
 
 /*******************************************************************************
@@ -48,7 +46,7 @@ redis_client.hset(appDb, counter, 0);
 // Setup Socket.IO
 var io = io.listen(server);
 io.on('connection', function(client) {
-  
+
   sendLeaders(client, false);
 
   /** * CLIENT CONNECT *** */
@@ -92,7 +90,7 @@ io.on('connection', function(client) {
     }
     sendStatsGetCounter();
   });
-  
+
   manageQueue();
 });
 
@@ -103,17 +101,17 @@ io.on('connection', function(client) {
  *          the socket.io client object
  */
 function sendStats(counter) {
-  io.broadcast( { gamestats : getStats(counter) });
+  io.broadcast({ gamestats : getStats(counter) });
 }
 
 function sendStatsGetCounter() {
   redis_client.hget(appDb, counter, function(err, counter) {
-    
-    io.broadcast( { gamestats : getStats(counter) });
+
+    io.broadcast({ gamestats : getStats(counter) });
   });
 }
-function getStats(counter){
-  return ""+ counter + "|" + vote1 + "|" + vote2 + "|" + flag1 + "|" + flag2+"";
+function getStats(counter) {
+  return "" + counter + "|" + vote1 + "|" + vote2 + "|" + flag1 + "|" + flag2 + "";
 }
 /*******************************************************************************
  * Sends the leaderboard to a client
@@ -131,20 +129,20 @@ function sendLeaders(client, doBroadcast) {
       leaders[3] = { id : results[6], ts : results[7] };
       leaders[4] = { id : results[8], ts : results[9] };
       if (doBroadcast) {
-        io.broadcast( { leaders : leaders });
+        io.broadcast({ leaders : leaders });
       }
       else {
-        client.send( { leaders : leaders });
+        client.send({ leaders : leaders });
       }
 
     });
   }
   else {
     if (doBroadcast) {
-      io.broadcast( { leaders : leaders });
+      io.broadcast({ leaders : leaders });
     }
     else {
-      client.send( { leaders : leaders });
+      client.send({ leaders : leaders });
     }
   }
 }
@@ -176,16 +174,15 @@ function addToQueue(clientId) {
   var ts = Math.round(new Date().getTime() / 1000.0);
   redis_client.zadd(sortedSet, ts, clientId, function(err, response) {
     console.log(clientId + " added to queue with epoch: " + ts);
-    io.clients[clientId].send( { announcement : "You're in line to battle!" })
-    if (emptyStream1) {// handle empty queues (usually on startup)
-        addNext(1);
-        emptyStream1 = false;
-      }
-      else if (emptyStream2) {
-        addNext(2);
-        emptyStream2 = false;
-      }
-    });
+    if (io.clients[clientId])
+      io.clients[clientId].send({ announcement : "You're in line to battle!" });
+//    redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
+//      if (results[0] == '' || !io.clients[results[0]])
+//        addNext(1);
+//      else if (results[1] == '' || !io.clients[results[1]])
+//        addNext(2);
+//    });
+  });
 }
 
 /*******************************************************************************
@@ -253,9 +250,8 @@ function determineLoser() {
  * Broadcasts to everyone the winning stream
  */
 
-function broadcastWinner(streamNum)
-{
-  io.broadcast({winner: streamNum});
+function broadcastWinner(streamNum) {
+  io.broadcast({ winner : streamNum });
 }
 /*******************************************************************************
  * Finds the next person in the queue and adds them to the stream that is now
@@ -294,7 +290,7 @@ function sendWaitTime(clientId) {
   redis_client.zcard(sortedSet, function(error, qlength) {
     redis_client.zrank(sortedSet, clientId, function(error, rank) {
       if (io.clients[clientId] != undefined) {
-        io.clients[clientId].send( { queue : { position : rank, qlength : qlength } });
+        io.clients[clientId].send({ queue : { position : rank, qlength : qlength } });
       }
     });
   });
@@ -367,7 +363,7 @@ function determineLeaderboard(clientId, ts, streamNum) {
       redis_client.zadd(tmpSet, broadcastTime, clientId);
       // prompt for them to be on the Leaderboard
       if (io.clients[clientId] != undefined) {
-        io.clients[clientId].send( { message : 'leaderboard' });
+        io.clients[clientId].send({ message : 'leaderboard' });
         sendLeaders(io.clients[clientId], true);
       }
     }
@@ -381,7 +377,7 @@ function determineLeaderboard(clientId, ts, streamNum) {
  */
 function stopStream(clientId) {
   if (io.clients[clientId] != undefined)
-    io.clients[clientId].send( { message : 'stopStream' });
+    io.clients[clientId].send({ message : 'stopStream' });
   // logAnalytics("Stopstream sent to: " + clientId);
 }
 
@@ -400,7 +396,7 @@ function stopStream(clientId) {
 function startStream(clientId, streamId) {
 
   if (io.clients[clientId] != undefined)
-    io.clients[clientId].send( { message : streamId });
+    io.clients[clientId].send({ message : streamId });
 }
 
 function confirmedStreaming(clientId, streamId) {
@@ -409,16 +405,20 @@ function confirmedStreaming(clientId, streamId) {
     redis_client.hset(appDb, "stream1Client", clientId + "|" + now);
   else if (streamId == "stream2")
     redis_client.hset(appDb, "stream2Client", clientId + "|" + now);
-  io.broadcast({message: "newbattle"});
+  io.broadcast({ message : "newbattle" });
   console.log(clientId + " should be publishing to: " + streamId);
 }
 
 function abortStreaming(clientId, streamId) {
   redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
-    if(clientId == results[0])
+    if (clientId == results[0]){
       removeLoser(1);
-    else if (clientId == results[1])
+      addNext(1);
+    }
+    else if (clientId == results[1]){
       removeLoser(2);
+      addNext(2);
+    }
   });
 }
 /*******************************************************************************
@@ -432,13 +432,13 @@ function removeFromQueue(clientId) {
     redis_client.zrem(sortedSet, clientId, function(err, response) {
       console.log(clientId + " removed from queue");
     });
-    //now check if they were broadcasting!
-    redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
-      if(clientId == results[0])
-        removeLoser(1);
-      else if (clientId == results[1])
-        removeLoser(2);
-    });
+    // now check if they were broadcasting!
+//    redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
+//      if (clientId == results[0])
+//        removeLoser(1);
+//      else if (clientId == results[1])
+//        removeLoser(2);
+//    });
   }
 }
 
@@ -452,9 +452,8 @@ function manageQueue() {
       if (io.clients[reply] == undefined) {
         removeFromQueue(reply);
       }
-      else
-      {
-        io.clients[reply].send({warning: "YOU'RE ABOUT TO GO LIVE!"});
+      else {
+        io.clients[reply].send({ warning : "YOU'RE ABOUT TO GO LIVE!" });
       }
     });
   });
@@ -485,16 +484,17 @@ function logAnalytics(method) {
 
 // Start the server
 server.listen(port);
-var bg = ["graffiti","boxing","nebula", "city"];
+var bg = [ "graffiti", "boxing", "nebula", "city" ];
 
 /*******************************************************************************
  * Routes served by the web server
  */
 server.get('/', function(req, res) {
   req.session.cookie.expires = false;
-  //var theme = bg[Math.floor(Math.random()*bg.length)]
+  // var theme = bg[Math.floor(Math.random()*bg.length)]
   var theme = "boxing";
-  res.render('index.jade', { locals : { header : 'Live Showdown', footer : '&copy;Live Showdown', title : 'Live Showdown', sessionKey : req.sessionID, theme: theme } });
+  res.render('index.jade', { locals : { header : 'Live Showdown', footer : '&copy;Live Showdown', title : 'Live Showdown', sessionKey : req.sessionID,
+    theme : theme } });
 });
 
 console.log('Listening on http://0.0.0.0:' + port);
