@@ -176,12 +176,15 @@ function addToQueue(clientId) {
     console.log(clientId + " added to queue with epoch: " + ts);
     if (io.clients[clientId])
       io.clients[clientId].send({ announcement : "You're in line to battle!" });
-//    redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
-//      if (results[0] == '' || !io.clients[results[0]])
-//        addNext(1);
-//      else if (results[1] == '' || !io.clients[results[1]])
-//        addNext(2);
-//    });
+    redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
+      if (results[0] == '' || !io.clients[results[0].split("|")[0]]) {
+        addNext(1);
+      }
+      else if (results[1] == '' || !io.clients[results[1].split("|")[0]]) {
+        addNext(2);
+      }
+
+    });
   });
 }
 
@@ -411,11 +414,11 @@ function confirmedStreaming(clientId, streamId) {
 
 function abortStreaming(clientId, streamId) {
   redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
-    if (clientId == results[0]){
+    if (clientId == results[0]) {
       removeLoser(1);
       addNext(1);
     }
-    else if (clientId == results[1]){
+    else if (clientId == results[1]) {
       removeLoser(2);
       addNext(2);
     }
@@ -433,12 +436,13 @@ function removeFromQueue(clientId) {
       console.log(clientId + " removed from queue");
     });
     // now check if they were broadcasting!
-//    redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
-//      if (clientId == results[0])
-//        removeLoser(1);
-//      else if (clientId == results[1])
-//        removeLoser(2);
-//    });
+    // redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err,
+    // results) {
+    // if (clientId == results[0])
+    // removeLoser(1);
+    // else if (clientId == results[1])
+    // removeLoser(2);
+    // });
   }
 }
 

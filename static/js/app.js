@@ -1,11 +1,11 @@
 var isFlashReady = false;
 window.onload = function() {
-  socket.connect();
+  if (!socket.connected) socket.connect();
   setInterval("checkStream()", 30000);
 };
 var movie;
 var socket = new io.Socket(null, { port : 80, rememberTransport : false });
-
+socket.connect();
 socket.on('message', function(data) {
   if (data.leaders) {
     writeLeaders(data.leaders);
@@ -52,9 +52,11 @@ socket.on('connect_failed', function() {
   socket.connect();
 });
 
+
 function startedStreaming(streamId) {
   socket.send({ streaming : streamId });
 }
+window['startedStreaming'] = startedStreaming;
 
 function stopStream() {
   getMovie().stopStream();
@@ -86,9 +88,12 @@ function checkStream() {
     socket.connect();
   }
 }
+
+
 function asReady() {
   isFlashReady = true;
 }
+window['asReady'] = asReady;
 function getEntry() {
   getMovie().getEntry();
 }
@@ -143,16 +148,22 @@ function writeLeaders(leaders) {
 
 }
 
+
 function abortStream(stream){
   socket.send({abortStream: stream});
 }
+window['abortStream'] = abortStream;
+
 function vote(streamNum) {
   socket.send({ vote : streamNum });
 }
+window['vote'] = vote;
+
 
 function flag(streamNum) {
   socket.send({ flag : streamNum });
 }
+window['flag'] = flag;
 
 function getMovie() {
   if (!movie) {

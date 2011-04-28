@@ -1,37 +1,7 @@
-var isFlashReady=false;window.onload=function(){socket.connect();setInterval("checkStream()",30000);};var movie;var socket=new io.Socket(null,{port:80,rememberTransport:false});socket.on('message',function(data){if(data.leaders){writeLeaders(data.leaders);}
-else if(data.gamestats){writeStats(data.gamestats);}
-else if(data.queue){writeQueue(data.queue);}
-else if(data.announcement){writeAnnouncement(data.announcement);}
-else if(data.warning){writeWarning(data.warning);}
-else if(data.winner){getMovie().setWinner(data.winner);}
-else if(data.message){if(data.message=='stopStream'){stopStream();addToQueue();}
-else if(data.message=="newbattle"){getMovie().startBattle();}
-else if(data.message.substr(0,6)=='stream'){startStream(data.message);}
-else if(data.message=='leaderboard'){writeAnnouncement('Congrats, you are on the leaderboard');getEntry();}}});socket.on('disconnect',function(){console.log('reconnecting...');socket.connect();});socket.on('connect_failed',function(){console.log('connection failed. reconnecting...');socket.connect();});function startedStreaming(streamId){socket.send({streaming:streamId});}
-function stopStream(){getMovie().stopStream();}
-function startStream(message){$("#warning").fadeOut("slow");getMovie().startStream(message);}
-function addToQueue(){if(!socket.connected){setTimeout("addToQueue()",1000);}
-else{socket.send({queue:true});}}
-function removeFromQueue(){socket.send({queue:false});}
-function sendEntryData(name,url,image){socket.send({entry:{name:name,url:url,image:image}});}
-function checkStream(){if(!socket.connected){stopStream();socket.connect();}}
-function asReady(){isFlashReady=true;}
-function getEntry(){getMovie().getEntry();}
-function writeAnnouncement(msg){$("#announceText").html('<em>'+msg+'</em>');$("#announcement").fadeIn('slow');setTimeout("$('#announcement').fadeOut('slow')",5000);}
-function writeWarning(msg){$("#warnText").html(msg);$("#warning").fadeIn("slow");}
-function writeStats(stats){if(getMovie())
-getMovie().updateStats(stats);var viewers=stats.split("|")[0];$("#stats").html('Viewers: '+viewers);}
-function writeLeaders(leaders){$("#leaders").html("");if(leaders[0].id!=undefined)
-$("#leaderBoard").show();for(i=0;i<=leaders.length-1;i++){if(leaders[i].id!=undefined){var leaderData=leaders[i].id.split("|");var id=leaderData[0];var name="Anonymous";var image="/images/unknown.jpg";var url="#";if(leaderData[1])
-name=leaderData[1];if(leaderData[2])
-image=leaderData[2];if(leaderData[3])
-url=leaderData[3];var li1=document.createElement('li');var min=Math.floor(leaders[i].ts/60);var sec=leaders[i].ts-(min*60);var ts=min+" min "+sec+" sec";$(li1).html('<a target="_blank" alt="'+id+'" href="'+url+'"><img width="128" height="90"  class="leaderImage" src="'+image
-+'"></a><div class="leaderName">'+name+'</div><div class="leaderTime">'+ts+'</div>');$("#leaders").append(li1);}}}
-function abortStream(stream){socket.send({abortStream:stream});}
-function vote(streamNum){socket.send({vote:streamNum});}
-function flag(streamNum){socket.send({flag:streamNum});}
-function getMovie(){if(!movie){var movieName='Webcam';if(isFlashReady){try{movie=document[movieName];movie=(movie==null||movie==undefined)?window[movieName]:movie;}
-catch(e){return null;}
-return movie;}
-else{}}
-return movie;}
+var isFlashReady=!1;window.onload=function(){socket.connected||socket.connect();setInterval("checkStream()",3E4)};var movie,socket=new io.Socket(null,{port:80,rememberTransport:!1});socket.connect();
+socket.on("message",function(a){a.leaders?writeLeaders(a.leaders):a.gamestats?writeStats(a.gamestats):a.queue?writeQueue(a.queue):a.announcement?writeAnnouncement(a.announcement):a.warning?writeWarning(a.warning):a.winner?getMovie().setWinner(a.winner):a.message&&(a.message=="stopStream"?(stopStream(),addToQueue()):a.message=="newbattle"?getMovie().startBattle():a.message.substr(0,6)=="stream"?startStream(a.message):a.message=="leaderboard"&&(writeAnnouncement("Congrats, you are on the leaderboard"),
+getEntry()))});socket.on("disconnect",function(){console.log("reconnecting...");socket.connect()});socket.on("connect_failed",function(){console.log("connection failed. reconnecting...");socket.connect()});function startedStreaming(a){socket.send({streaming:a})}window.startedStreaming=startedStreaming;function stopStream(){getMovie().stopStream()}function startStream(a){$("#warning").fadeOut("slow");getMovie().startStream(a)}
+function addToQueue(){socket.connected?socket.send({queue:!0}):setTimeout("addToQueue()",1E3)}function removeFromQueue(){socket.send({queue:!1})}function sendEntryData(a,b,d){socket.send({entry:{name:a,url:b,image:d}})}function checkStream(){socket.connected||(stopStream(),socket.connect())}function asReady(){isFlashReady=!0}window.asReady=asReady;function getEntry(){getMovie().getEntry()}
+function writeAnnouncement(a){$("#announceText").html("<em>"+a+"</em>");$("#announcement").fadeIn("slow");setTimeout("$('#announcement').fadeOut('slow')",5E3)}function writeWarning(a){$("#warnText").html(a);$("#warning").fadeIn("slow")}function writeStats(a){getMovie()&&getMovie().updateStats(a);a=a.split("|")[0];$("#stats").html("Viewers: "+a)}
+function writeLeaders(a){$("#leaders").html("");a[0].id!=void 0&&$("#leaderBoard").show();for(i=0;i<=a.length-1;i++)if(a[i].id!=void 0){var b=a[i].id.split("|"),d=b[0],e="Anonymous",f="/images/unknown.jpg",g="#";b[1]&&(e=b[1]);b[2]&&(f=b[2]);b[3]&&(g=b[3]);var b=document.createElement("li"),c=Math.floor(a[i].ts/60),c=c+" min "+(a[i].ts-c*60)+" sec";$(b).html('<a target="_blank" alt="'+d+'" href="'+g+'"><img width="128" height="90"  class="leaderImage" src="'+f+'"></a><div class="leaderName">'+e+'</div><div class="leaderTime">'+
+c+"</div>");$("#leaders").append(b)}}function abortStream(a){socket.send({abortStream:a})}window.abortStream=abortStream;function vote(a){socket.send({vote:a})}window.vote=vote;function flag(a){socket.send({flag:a})}window.flag=flag;function getMovie(){if(!movie&&isFlashReady)try{movie=document.Webcam,movie=movie==null||movie==void 0?window.Webcam:movie}catch(a){return null}return movie};
