@@ -2,8 +2,6 @@
 <projectDescription>
 	<name>sharkvideo</name>
 	<comment></comment>
-	<projects>
-	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.wst.jsdt.core.javascriptValidator</name>
