@@ -15,6 +15,7 @@ window.onload = function() {
     $("#howItWorksText").text(how_it_works_text);
     $('#contactUsLink').text(contact_us);
     $('#pickOne').text(pick_one);
+    $('#statsLabel').text(viewers);
     flashLabels = vote + "|" + flag;
     if (getMovie()) getMovie().setLabels(flashLabels);
   } });
@@ -140,7 +141,7 @@ function writeStats(stats) {
   if (getMovie())
     getMovie().updateStats(stats);
   var viewers = stats.split("|")[0];
-  $("#stats").html('Viewers: ' + viewers);
+  $("#statsCount").text(": " +viewers);
 }
 
 function writeLeaders(leaders) {

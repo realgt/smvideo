@@ -21,7 +21,9 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 				a(class="mainLink", href="/") LIVE SHOWDOWN
 				a(class='howItWorksLabel', href="#howItWorks")
 				a(class='leaderBoardLabel', href="#leaderBoard") 
-				#stats		
+				#stats
+					span#statsLabel
+					span#statsCount
 		#warning(style="display:none")
 			span#warnText
 			a(class="closeX", href="#", onClick="$('#warning').fadeOut('slow')") [X]
