@@ -1,24 +1,26 @@
-!!! transitional
+!!! 5
 html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 	head
 		title= title
 		link(rel='stylesheet', href = '/themes/'+theme+'/theme.css')
 		link(rel='stylesheet', href = '/css/styles.css')
 		link(href='http://fonts.googleapis.com/css?family=Architects+Daughter:regular', rel='stylesheet', type='text/css')
-		meta(content='text/html; charset=utf-8', http-equiv='Content-Type')
+		meta(content='text/html; charset=utf-8', http-equiv='Content-Type')	
+		script(type='text/javascript') 
+			var detectedLang = '#{lang}';	
+		script(src='/flex/AC_OETags.js')
 		script(src='/js/socket.io.min.js')
 		script(src='/js/analytics.js')
 		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js')
-		script(src='/js/min/app.js')
-		script(src='/flex/AC_OETags.js')
-			
+		script(src='/js/jquery.i18n.properties-min.js')
+		script(src='/js/min/app.js')	
 			
 	body	
 		#topbar
 			#topbar2 
 				a(class="mainLink", href="/") LIVE SHOWDOWN
-				a(href="#howItWorks") How It Works
-				a(href="#leaderBoard") Hall of Fame				
+				a(class='howItWorksLabel', href="#howItWorks")
+				a(class='leaderBoardLabel', href="#leaderBoard") 
 				#stats		
 		#warning(style="display:none")
 			span#warnText
@@ -30,21 +32,21 @@ html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
 			#content
 				#header_container.homepage
 				#logo
-					span Pick One
+					span#pickOne
 					//span !{title}
 				!{body}
 		#footer_container
 			#footer
 				hr
 				#howItWorks
-					h2 How It Works
-					p Two live streaming webcams are battling for your vote on who you like more. Whoever gets the majority vote wins and stays to battle the next person in line, hoping to make it to the Hall of Fame. If you have a webcam, you're already in line to play!
+					h2(class='howItWorksLabel')
+					p#howItWorksText
 				hr
 				#leaderBoard(style="display:none")
-					h2 Hall of Fame
+					h2(class='leaderBoardLabel')
 					ul#leaders
 				
 				
 				#footerText(style="color:#ccc;text-align:center") 
-					a(href="http://twitter.com/liveshowdown", target="_blank") Contact Us
+					a(id='contactUsLink',href="http://twitter.com/liveshowdown", target="_blank")
 					!{footer}

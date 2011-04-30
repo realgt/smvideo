@@ -175,7 +175,7 @@ function addToQueue(clientId) {
   redis_client.zadd(sortedSet, ts, clientId, function(err, response) {
     console.log(clientId + " added to queue with epoch: " + ts);
     if (io.clients[clientId])
-      io.clients[clientId].send({ announcement : "You're in line to battle!" });
+      io.clients[clientId].send({ announcement : "inQueue" });
     redis_client.HMGET(appDb, "stream1Client", "stream2Client", function(err, results) {
       if (results[0] == '' || !io.clients[results[0].split("|")[0]]) {
         addNext(1);
@@ -366,7 +366,7 @@ function determineLeaderboard(clientId, ts, streamNum) {
       redis_client.zadd(tmpSet, broadcastTime, clientId);
       // prompt for them to be on the Leaderboard
       if (io.clients[clientId] != undefined) {
-        io.clients[clientId].send({ message : 'leaderboard' });
+        io.clients[clientId].send({ announcement : 'leaderboard' });
         sendLeaders(io.clients[clientId], true);
       }
     }
@@ -457,7 +457,7 @@ function manageQueue() {
         removeFromQueue(reply);
       }
       else {
-        io.clients[reply].send({ warning : "YOU'RE ABOUT TO GO LIVE!" });
+        io.clients[reply].send({ announcement : "warnLive" });
       }
     });
   });
@@ -486,6 +486,18 @@ function logAnalytics(method) {
 
 }
 
+function getLang(req){
+  try {
+    if (req.query.lang)
+      return req.query.lang;
+    return req.headers['accept-language'].split(',')[0].split(';', 1)[0];
+  }
+  catch(err){
+    console.log("error in detecting language, defaulting to en!");
+  }
+  return "en";
+  
+}
 // Start the server
 server.listen(port);
 var bg = [ "graffiti", "boxing", "nebula", "city" ];
@@ -497,8 +509,7 @@ server.get('/', function(req, res) {
   req.session.cookie.expires = false;
   // var theme = bg[Math.floor(Math.random()*bg.length)]
   var theme = "boxing";
-  res.render('index.jade', { locals : { header : 'Live Showdown', footer : '&copy;Live Showdown', title : 'Live Showdown', sessionKey : req.sessionID,
-    theme : theme } });
+  res.render('index.jade', { locals : { header : 'Live Showdown', footer : '&copy;Live Showdown', title : 'Live Showdown', sessionKey : req.sessionID, theme : theme, lang : getLang(req) } });
 });
 
 console.log('Listening on http://0.0.0.0:' + port);

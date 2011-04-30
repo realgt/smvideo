@@ -1,10 +1,25 @@
 var isFlashReady = false;
-window.onload = function() {
-  if (!socket.connected) socket.connect();
-  setInterval("checkStream()", 30000);
-};
+var flashLabels;
 var movie;
 var socket = new io.Socket(null, { port : 80, rememberTransport : false });
+
+window.onload = function() {
+  if (!socket.connected)
+    socket.connect();
+  setInterval("checkStream()", 30000);
+
+  // set labels using js
+  jQuery.i18n.properties({ name : 'index', path : '/locale/', mode : 'both', language : detectedLang, callback : function() {
+    $(".howItWorksLabel").text(how_it_works_label);
+    $(".leaderBoardLabel").text(hall_of_fame);
+    $("#howItWorksText").text(how_it_works_text);
+    $('#contactUsLink').text(contact_us);
+    $('#pickOne').text(pick_one);
+    flashLabels = vote + "|" + flag;
+    if (getMovie()) getMovie().setLabels(flashLabels);
+  } });
+};
+
 socket.connect();
 socket.on('message', function(data) {
   if (data.leaders) {
@@ -17,10 +32,26 @@ socket.on('message', function(data) {
     writeQueue(data.queue);
   }
   else if (data.announcement) {
-    writeAnnouncement(data.announcement);
-  }
-  else if (data.warning) {
-    writeWarning(data.warning);
+    var msg = jQuery.i18n.prop(data.announcement);
+    switch (data.announcement)
+    {
+      case "inQueue":
+      {
+        writeAnnouncement(msg);
+        break;
+      }
+      case "warnLive":
+      {
+        writeWarning(msg);
+        break;
+      }
+      case "leaderboard":
+      {
+        writeAnnouncement(msg);
+        getEntry();
+        break;
+      }
+    }
   }
   else if (data.winner) {
     getMovie().setWinner(data.winner);
@@ -36,10 +67,6 @@ socket.on('message', function(data) {
     else if (data.message.substr(0, 6) == 'stream') {
       startStream(data.message);
     }
-    else if (data.message == 'leaderboard') {
-      writeAnnouncement('Congrats, you are on the leaderboard');
-      getEntry();
-    }
   }
 
 });
@@ -51,7 +78,6 @@ socket.on('connect_failed', function() {
   console.log('connection failed. reconnecting...');
   socket.connect();
 });
-
 
 function startedStreaming(streamId) {
   socket.send({ streaming : streamId });
@@ -89,9 +115,10 @@ function checkStream() {
   }
 }
 
-
 function asReady() {
   isFlashReady = true;
+  if (flashLabels) 
+    getMovie().setLabels(flashLabels);
 }
 window['asReady'] = asReady;
 function getEntry() {
@@ -148,9 +175,8 @@ function writeLeaders(leaders) {
 
 }
 
-
-function abortStream(stream){
-  socket.send({abortStream: stream});
+function abortStream(stream) {
+  socket.send({ abortStream : stream });
 }
 window['abortStream'] = abortStream;
 
@@ -158,7 +184,6 @@ function vote(streamNum) {
   socket.send({ vote : streamNum });
 }
 window['vote'] = vote;
-
 
 function flag(streamNum) {
   socket.send({ flag : streamNum });
