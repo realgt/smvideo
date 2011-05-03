@@ -101,6 +101,21 @@ function addToQueue() {
   }
 
 }
+
+function abortStream(stream) {
+  socket.send({ abortStream : stream });
+}
+window['abortStream'] = abortStream;
+
+function voteStream(streamNum) {
+  socket.send({ vote : streamNum });
+}
+window['voteStream'] = voteStream;
+
+function flagStream(streamNum) {
+  socket.send({ flag : streamNum });
+}
+window['flagStream'] = flagStream;
 function removeFromQueue() {
   socket.send({ queue : false });
 }
@@ -176,20 +191,7 @@ function writeLeaders(leaders) {
 
 }
 
-function abortStream(stream) {
-  socket.send({ abortStream : stream });
-}
-window['abortStream'] = abortStream;
 
-function vote(streamNum) {
-  socket.send({ vote : streamNum });
-}
-window['vote'] = vote;
-
-function flag(streamNum) {
-  socket.send({ flag : streamNum });
-}
-window['flag'] = flag;
 
 function getMovie() {
   if (!movie) {
