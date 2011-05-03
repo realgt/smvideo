@@ -1,6 +1,6 @@
 body {
-	background-color: #000 !important;
+	background-color: #F3F3F3 !important;
 }
 div#main_container {
-	background: #000 url(background.jpg) no-repeat scroll center center;
+	background: #F3F3F3; /* url(background.jpg) no-repeat scroll center center; */
 }
