@@ -24,7 +24,7 @@ hr {
 }
 
 p {
-	font-size: 30px;
+	font-size: 24px;
 	text-shadow: 1px 2px 2px #666666;
 }
 
@@ -41,7 +41,7 @@ p {
 #topbar2 {
 	width: 936px;
 	margin: 0 auto;
-	padding: 5px 0;
+	padding: 0px 0px;
 	font-size: 16px;
 	text-align: left;
 }
@@ -56,14 +56,13 @@ p {
 }
 
 #topbar a.mainLink {
-	padding-top: 10px;
 	font-weight: bold;
-	padding-right: 60px;
+	padding-right: 30px;
 	font-size: 24px;
 }
 
 #topbar a.howItWorksLabel{
-	padding-right: 60px;
+	padding-right: 30px;
 }
 
 div#logo {
@@ -120,6 +119,7 @@ div#logo {
 	font-size: 18px;
 	text-decoration: none;
 	vertical-align: middle;
+	margin-top: 10px;
 }
 
 #stats:hover {
