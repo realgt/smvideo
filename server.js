@@ -33,6 +33,7 @@ counter = "counter";
 appDb = "hApp";
 leaders = [];
 loserClient = '';
+emailList = "emailList";
 
 /*******************************************************************************
  * start clean up the db on a new start FIXME: use config params to wrap this
@@ -505,11 +506,22 @@ var bg = [ "graffiti", "boxing", "nebula", "city" ];
 /*******************************************************************************
  * Routes served by the web server
  */
-server.get('/', function(req, res) {
+server.get('/xerly', function(req, res) {
   req.session.cookie.expires = false;
   // var theme = bg[Math.floor(Math.random()*bg.length)]
   var theme = "boxing";
   res.render('index.jade', { locals : { header : 'Live Showdown', footer : '&copy;Live Showdown', title : 'Live Showdown', sessionKey : req.sessionID, theme : theme, lang : getLang(req) } });
 });
-
+server.get('/', function(req, res) {
+  res.render('offline.jade', {layout: false, locals : { title : 'Live Showdown', lang : getLang(req)}});
+});
+server.get('/addEmail', function(req, res) {
+  if (req.query.email)
+  {
+    redis_client.RPUSH(emailList, req.query.email, function(err,result){
+      res.send("ok");
+      console.log('received: '+req.query.email);
+    });
+  }
+});
 console.log('Listening on http://0.0.0.0:' + port);

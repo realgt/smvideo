@@ -1,0 +1,18 @@
+!!! 5
+html(lang='en', xmlns='http://www.w3.org/1999/xhtml')
+	head
+		title= title
+		link(rel='stylesheet', href = '/css/offline.css')
+		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js')
+		script(src='/js/jquery.i18n.properties-min.js')
+		script(type='text/javascript') 
+			var detectedLang = '#{lang}';
+		script(src='/js/offline.js', 'type='text/javascript') 
+			
+	body
+		img(src='/images/liveshowdown_png_darkbg.png')
+		h1(style='display:none') Live Showdown
+		h2#emailLabel 
+		form#emailForm
+			input(id='email', type='text',name='email', onclick='this.value=""')
+			input(id='submitButton', type='button', onclick='submitForm()')
