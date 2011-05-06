@@ -5,7 +5,7 @@
 	list-style-type: none;
 	outline: 0;
 	color: #3d3d3d;
-	font-family: "Slackey", Arial, Helvetica, sans-serif;
+	font-family: Trebuchet MS,Arial,Helvetica,sans-serif;
 }
 
 body {
@@ -14,7 +14,7 @@ body {
 
 h2 {
 	font-size: 60px;
-	text-shadow: 1px 2px 2px #666666;
+	text-shadow: 1px 1px 1px #666666;
 }
 
 hr {
@@ -25,7 +25,7 @@ hr {
 
 p {
 	font-size: 24px;
-	text-shadow: 1px 2px 2px #666666;
+	text-shadow: 1px 1px 1px #666666;
 }
 
 #topbar {
@@ -52,7 +52,7 @@ p {
 
 #topbar a {
 	text-decoration: none;
-	color: #ccc;
+	color: #F4F4F4;
 }
 
 #topbar a.mainLink {
@@ -98,6 +98,9 @@ div#logo {
 	vertical-align: middle;
 	text-align: center;
 }
+#warnText{
+	color:#fff !important;
+	}
 
 #stats {
 	float: right;
@@ -172,7 +175,7 @@ div#showcase_wrapper { /* 	float: left; */
 	display: inline-block;
 	width: 960px;
 	height: 575px;
-	margin-top: 105px;
+	margin-top: 0px;
 	position: absolute;
 	z-index: 0;
 }
@@ -204,7 +207,7 @@ div#footer {
 
 ul#leaders li {
 	font-size: 30px;
-	text-shadow: 1px 2px 2px #666666;
+	text-shadow: 1px 1px 1px #666666;
 }
 
 ul#leaders li div {
