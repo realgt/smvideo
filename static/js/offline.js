@@ -1,6 +1,6 @@
 $(document).ready(function() {
   jQuery.i18n.properties({ name : 'offline', path : '/locale/', mode : 'both', language : detectedLang, callback : function() {
-    $("#emailLabel").text(emailLabel);
+    $("#emailLabel").html(emailLabel);
     $("#email")[0].value=emailPrompt;
     $("#submitButton")[0].value=submitLabel;
   } });

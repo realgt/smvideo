@@ -506,7 +506,7 @@ var bg = [ "graffiti", "boxing", "nebula", "city" ];
 /*******************************************************************************
  * Routes served by the web server
  */
-server.get('/xerly', function(req, res) {
+server.get('/preview', function(req, res) {
   req.session.cookie.expires = false;
   // var theme = bg[Math.floor(Math.random()*bg.length)]
   var theme = "boxing";
